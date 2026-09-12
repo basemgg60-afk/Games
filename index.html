@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>ساحة الألعاب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0a1e;
+  --bg2:#141033;
+  --panel:#1b1640;
+  --panel2:#241d54;
+  --cyan:#2be6d8;
+  --pink:#ff5d8f;
+  --amber:#ffcd3c;
+  --violet:#8b7bff;
+  --text:#f3f1ff;
+  --muted:#a49bd6;
+  --danger:#ff5d5d;
+  --good:#3fe08a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;overflow-x:hidden;}
+body{
+  background:
+    radial-gradient(circle at 15% 0%, #2a1f6b 0%, transparent 45%),
+    radial-gradient(circle at 100% 20%, #3a1550 0%, transparent 40%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Cairo',sans-serif;
+  min-height:100vh;
+  user-select:none;
+}
+h1,h2,h3,.display{font-family:'Baloo Bhaijaan 2',sans-serif;}
+button{font-family:'Cairo',sans-serif;}
+
+/* ---------- HOME ---------- */
+#app{max-width:1100px;margin:0 auto;padding:18px 16px 60px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand .logo{
+  width:46px;height:46px;border-radius:14px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  box-shadow:0 6px 18px rgba(43,230,216,.35);
+}
+.brand h1{font-size:22px;margin:0;font-weight:800;letter-spacing:.5px;}
+.brand span{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-top:-2px;}
+
+.tabs{display:flex;gap:8px;margin:18px 0 16px;overflow-x:auto;padding-bottom:4px;}
+.tab{
+  flex:0 0 auto;padding:9px 18px;border-radius:999px;border:2px solid transparent;
+  background:var(--panel);color:var(--muted);font-weight:700;font-size:14px;cursor:pointer;
+  transition:transform .15s ease, background .2s ease, color .2s ease;white-space:nowrap;
+}
+.tab.active{background:linear-gradient(135deg,var(--cyan),var(--violet));color:#0c0a1e;}
+.tab:active{transform:scale(.95);}
+
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;
+}
+.card{
+  background:var(--panel);border-radius:20px;padding:14px 10px 12px;text-align:center;
+  cursor:pointer;position:relative;overflow:hidden;
+  border:2px solid rgba(255,255,255,.05);
+  transition:transform .15s ease, border-color .2s ease;
+}
+.card:active{transform:scale(.94);}
+.card .icon-tile{
+  width:64px;height:64px;margin:0 auto 10px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  box-shadow:0 8px 16px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.card h3{font-size:14.5px;margin:0 0 6px;font-weight:700;line-height:1.25;min-height:36px;display:flex;align-items:center;justify-content:center;}
+.tag{
+  display:inline-block;font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:999px;
+  color:#0c0a1e;letter-spacing:.2px;
+}
+.tag.single{background:var(--cyan);}
+.tag.two{background:var(--pink);}
+.tag.both{background:var(--amber);}
+.card .best{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.35);color:var(--amber);
+  font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:8px;}
+
+/* ---------- GAME SCREEN ---------- */
+#gameScreen{
+  position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);
+}
+#gameScreen.open{transform:translateY(0);}
+.game-topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 14px;background:var(--panel);border-bottom:2px solid rgba(255,255,255,.06);
+  flex:0 0 auto;
+}
+#backBtn{
+  background:var(--panel2);color:var(--text);border:none;border-radius:12px;
+  padding:9px 14px;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;
+}
+#backBtn:active{transform:scale(.95);}
+#gameTitle{font-size:17px;font-weight:800;margin:0;flex:1;text-align:center;}
+#scoreDisplay{font-size:13px;font-weight:800;color:var(--amber);min-width:40px;text-align:left;}
+#howBtn{
+  width:34px;height:34px;border-radius:50%;border:none;background:var(--panel2);color:var(--amber);
+  font-weight:800;font-size:16px;cursor:pointer;flex:0 0 auto;
+}
+#howBtn:active{transform:scale(.9);}
+#howOverlay{
+  position:fixed;inset:0;background:rgba(6,4,20,.82);backdrop-filter:blur(4px);
+  z-index:110;display:none;align-items:center;justify-content:center;padding:20px;
+}
+#howOverlay.show{display:flex;}
+#howText{color:var(--muted);font-size:14px;font-weight:600;}
+
+#gameContainer{
+  flex:1;position:relative;overflow:auto;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding:14px;gap:10px;
+}
+
+/* ---------- RESULT OVERLAY ---------- */
+#resultOverlay{
+  position:fixed;inset:0;background:rgba(6,4,20,.82);backdrop-filter:blur(4px);
+  z-index:100;display:none;align-items:center;justify-content:center;padding:20px;
+}
+#resultOverlay.show{display:flex;}
+.result-card{
+  background:var(--panel);border-radius:24px;padding:28px 24px;text-align:center;max-width:340px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  animation:pop .3s cubic-bezier(.2,.9,.3,1.2);
+}
+@keyframes pop{from{transform:scale(.7);opacity:0;}to{transform:scale(1);opacity:1;}}
+.result-card .emoji{font-size:52px;margin-bottom:6px;}
+.result-card h2{margin:0 0 6px;font-size:22px;}
+.result-card p{margin:0 0 20px;color:var(--muted);font-size:14px;font-weight:600;}
+.result-btns{display:flex;gap:10px;}
+.btn{
+  flex:1;border:none;border-radius:14px;padding:13px 10px;font-weight:800;font-size:14.5px;cursor:pointer;
+}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),var(--violet));color:#0c0a1e;}
+.btn-secondary{background:var(--panel2);color:var(--text);}
+.btn:active{transform:scale(.95);}
+
+/* ---------- SHARED GAME UI HELPERS ---------- */
+.pill-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.info-pill{background:var(--panel2);padding:8px 16px;border-radius:12px;font-weight:800;font-size:13px;}
+.info-pill b{color:var(--amber);}
+.grid-box{display:grid;gap:8px;}
+.tile-btn{
+  border:none;border-radius:14px;background:var(--panel2);color:var(--text);
+  font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:transform .1s ease, background .15s ease;
+}
+.tile-btn:active{transform:scale(.92);}
+.hidden{display:none !important;}
+canvas{border-radius:16px;background:var(--panel2);touch-action:none;max-width:100%;}
+.dpad{display:grid;grid-template-columns:repeat(3,54px);grid-template-rows:repeat(3,54px);gap:6px;}
+.dpad button{border:none;border-radius:12px;background:var(--panel2);color:var(--text);font-size:22px;font-weight:800;cursor:pointer;}
+.dpad button:active{transform:scale(.9);background:var(--violet);}
+.split{display:flex;width:100%;height:100%;gap:8px;}
+.split > div{flex:1;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:800;}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">🎮</div>
+      <div>
+        <h1>ساحة الألعاب</h1>
+        <span id="gameCount">تحميل...</span>
+      </div>
+    </div>
+  </div>
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-cat="all">الكل</div>
+    <div class="tab" data-cat="single">فردي 🧠</div>
+    <div class="tab" data-cat="two">ثنائي 🤝</div>
+    <div class="tab" data-cat="both">تدعم الاثنين</div>
+  </div>
+  <div class="grid" id="gameGrid"></div>
+</div>
+
+<div id="gameScreen">
+  <div class="game-topbar">
+    <button id="backBtn">➜ رجوع</button>
+    <h2 id="gameTitle">اسم اللعبة</h2>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div id="scoreDisplay"></div>
+      <button id="howBtn" title="إزاي ألعب؟">❓</button>
+    </div>
+  </div>
+  <div id="gameContainer"></div>
+</div>
+
+<div id="howOverlay">
+  <div class="result-card">
+    <div class="emoji" id="howEmoji">❓</div>
+    <h2 id="howTitle">إزاي تلعب</h2>
+    <p id="howText" style="white-space:pre-line; text-align:right; line-height:1.7;"></p>
+    <div class="result-btns">
+      <button class="btn btn-primary" id="howCloseBtn">تمام، يلا نلعب</button>
+    </div>
+  </div>
+</div>
+
+<div id="resultOverlay">
+  <div class="result-card">
+    <div class="emoji" id="resultEmoji">🏆</div>
+    <h2 id="resultTitle">فزت!</h2>
+    <p id="resultMsg">تفاصيل النتيجة هنا</p>
+    <div class="result-btns">
+      <button class="btn btn-secondary" id="resultMenuBtn">القائمة</button>
+      <button class="btn btn-primary" id="resultReplayBtn">العب تاني</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== SHARED HELPERS =====================
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html !== undefined) e.innerHTML = html;
+  return e;
+}
+function rand(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+function fmtTime(sec){
+  const m = Math.floor(sec/60), s = sec%60;
+  return `${m}:${s<10?'0':''}${s}`;
+}
+
+const GAMES = [];
+
+// ===================== 1. XO (تيك تاك تو) =====================
+GAMES.push({
+  id:'xo', name:'إكس أو', icon:'❌', color:'linear-gradient(135deg,#2be6d8,#8b7bff)', category:'both',
+  how:'اللعبة من 3 في 3 مربعات.\nكل لاعب بيحط علامته (❌ أو ⭕) في مربع فاضي بالتبادل.\nأول واحد يعمل خط كامل (أفقي أو رأسي أو قطري) بعلامته يكسب.\nفيه زر فوق تقدر تبدّل بيه بين اللعب ضد الكمبيوتر أو مع صحابك على نفس التابلت.',
+  init(container, api){
+    let mode = 'ai'; // 'ai' | 'pvp'
+    let board, turn, over, scores;
+    board = Array(9).fill(null); turn='X'; over=false; scores={X:0,O:0};
+
+    const wrap = el('div','pill-row');
+    const modeBtn = el('button','btn btn-secondary',''); modeBtn.style.flex='0 0 auto'; modeBtn.style.padding='9px 16px';
+    wrap.appendChild(modeBtn);
+    const scoreP = el('div','info-pill', `❌ <b id="xoScoreX">0</b> &nbsp;|&nbsp; ⭕ <b id="xoScoreO">0</b>`);
+    wrap.appendChild(scoreP);
+    container.appendChild(wrap);
+
+    const status = el('div','info-pill','');
+    container.appendChild(status);
+
+    const grid = el('div','grid-box');
+    grid.style.gridTemplateColumns = 'repeat(3, 84px)';
+    grid.style.gridTemplateRows = 'repeat(3, 84px)';
+    container.appendChild(grid);
+
+    const cells = [];
+    for(let i=0;i<9;i++){
+      const c = el('button','tile-btn'); c.style.fontSize='36px';
+      c.addEventListener('click', ()=>play(i));
+      grid.appendChild(c); cells.push(c);
+    }
+
+    function updateModeLabel(){ modeBtn.textContent = mode==='ai' ? '🤖 ضد الكمبيوتر' : '🤝 لاعبين'; }
+    modeBtn.addEventListener('click', ()=>{ mode = mode==='ai' ? 'pvp' : 'ai'; updateModeLabel(); reset(); });
+    updateModeLabel();
+
+    const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    function checkWin(b){
+      for(const [a,b1,c] of LINES){ if(b[a] && b[a]===b[b1] && b[a]===b[c]) return b[a]; }
+      if(b.every(x=>x)) return 'draw';
+      return null;
+    }
+    function render(){
+      cells.forEach((c,i)=>{ c.textContent = board[i]==='X'?'❌':board[i]==='O'?'⭕':''; });
+      status.innerHTML = over ? '' : `دور: ${turn==='X'?'❌':'⭕'} ${mode==='ai' && turn==='O' ? '(الكمبيوتر)':''}`;
+      document.getElementById('xoScoreX').textContent = scores.X;
+      document.getElementById('xoScoreO').textContent = scores.O;
+    }
+    function play(i){
+      if(over || board[i]) return;
+      if(mode==='ai' && turn==='O') return;
+      board[i]=turn;
+      const res = checkWin(board);
+      if(res){ finish(res); return; }
+      turn = turn==='X'?'O':'X';
+      render();
+      if(mode==='ai' && turn==='O' && !over){ setTimeout(aiMove, 400); }
+    }
+    function aiMove(){
+      if(over) return;
+      let move = findBest('O') ?? findBest('X') ?? (board[4]===null?4:null) ?? emptyCells()[rand(0,emptyCells().length-1)];
+      board[move]='O';
+      const res = checkWin(board);
+      if(res){ finish(res); return; }
+      turn='X'; render();
+    }
+    function emptyCells(){ return board.map((v,i)=>v?null:i).filter(v=>v!==null); }
+    function findBest(sym){
+      for(const i of emptyCells()){ const copy=[...board]; copy[i]=sym; if(checkWin(copy)===sym) return i; }
+      return null;
+    }
+    function finish(res){
+      over = true;
+      if(res==='draw'){ render(); api.showResult('draw','تعادل!','محدش كسب المرة دي 🤝'); return; }
+      scores[res]++;
+      render();
+      if(mode==='ai'){
+        api.setScore(`❌ ${scores.X} - ⭕ ${scores.O}`);
+        if(res==='X') api.showResult('win','فزت! 🎉', 'كسبت الكمبيوتر، برافو!');
+        else api.showResult('lose','خسرت 😅','الكمبيوتر كسب المرة دي');
+      } else {
+        api.setScore(`❌ ${scores.X} - ⭕ ${scores.O}`);
+        api.showResult('win', `فاز ${res==='X'?'❌':'⭕'}!`, 'دور اللاعب التاني يبدأ من أول وجديد');
+      }
+    }
+    function reset(){ board=Array(9).fill(null); turn='X'; over=false; render(); }
+    reset();
+    api.setScore(`❌ ${scores.X} - ⭕ ${scores.O}`);
+    return ()=>{};
+  }
+});
+
+// ===================== 2. لعبة الذاكرة =====================
+GAMES.push({
+  id:'memory', name:'لعبة الذاكرة', icon:'🧠', color:'linear-gradient(135deg,#8b7bff,#2be6d8)', category:'single',
+  how:'هتلاقي 16 كارت مقلوبة على وشها.\nدوس على كارتين في كل مرة عشان تكشفهم.\nلو الرمزين متطابقين هيفضلوا مكشوفين، ولو مختلفين هيتقلبوا تاني.\nاكشف كل الأزواج بأقل عدد حركات وأسرع وقت ممكن.',
+  init(container, api){
+    const ICONS = ['🐱','🐶','🦁','🐸','🐵','🦋','🍉','🍕','⚽','🚀','🌟','🎈'];
+    const pairs = shuffle(ICONS.slice(0,8).concat(ICONS.slice(0,8)));
+    let flipped=[], matched=new Set(), moves=0, timer=0, locked=false;
+
+    const info = el('div','pill-row');
+    info.innerHTML = `<div class="info-pill">⏱️ <b id="memTime">0:00</b></div><div class="info-pill">🔁 حركات: <b id="memMoves">0</b></div>`;
+    container.appendChild(info);
+
+    const grid = el('div','grid-box');
+    grid.style.gridTemplateColumns='repeat(4, 68px)';
+    grid.style.gridTemplateRows='repeat(4, 68px)';
+    container.appendChild(grid);
+
+    const cards = pairs.map((icon,idx)=>{
+      const c = el('button','tile-btn', '❓'); c.style.fontSize='28px'; c.dataset.icon=icon; c.dataset.idx=idx;
+      c.addEventListener('click', ()=>flip(idx,c));
+      grid.appendChild(c);
+      return c;
+    });
+
+    const iv = setInterval(()=>{ timer++; document.getElementById('memTime').textContent = fmtTime(timer); }, 1000);
+
+    function flip(idx,c){
+      if(locked || matched.has(idx) || flipped.find(f=>f.idx===idx)) return;
+      c.textContent = c.dataset.icon;
+      flipped.push({idx,c});
+      if(flipped.length===2){
+        moves++; document.getElementById('memMoves').textContent = moves;
+        locked = true;
+        const [a,b] = flipped;
+        if(a.c.dataset.icon === b.c.dataset.icon){
+          matched.add(a.idx); matched.add(b.idx);
+          flipped=[]; locked=false;
+          if(matched.size===pairs.length){
+            clearInterval(iv);
+            api.updateBest(-timer);
+            api.showResult('win','برافو! 🎉', `خلصت في ${fmtTime(timer)} وبعدد حركات ${moves}`);
+          }
+        } else {
+          setTimeout(()=>{ a.c.textContent='❓'; b.c.textContent='❓'; flipped=[]; locked=false; }, 700);
+        }
+      }
+      api.setScore(`حركات: ${moves}`);
+    }
+    return ()=> clearInterval(iv);
+  }
+});
+
+// ===================== 3. الثعبان (Snake) =====================
+GAMES.push({
+  id:'snake', name:'الثعبان', icon:'🐍', color:'linear-gradient(135deg,#3fe08a,#2be6d8)', category:'single',
+  how:'حرّك الثعبان بالأسهم اللي تحت الشاشة (أو أسهم لوحة المفاتيح لو بتستخدم كمبيوتر).\nكل ما تاكل الأكل الأصفر الثعبان بيطول والنقط بتزيد.\nخلي بالك متصدمش في الحيطة ولا في جسمك، لو حصل كده اللعبة بتخلص.',
+  init(container, api){
+    const SIZE=15, CELL=18;
+    const canvas = el('canvas'); canvas.width=SIZE*CELL; canvas.height=SIZE*CELL;
+    container.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    const dpad = el('div','dpad');
+    dpad.innerHTML = `<span></span><button data-d="up">⬆️</button><span></span>
+      <button data-d="left">⬅️</button><span></span><button data-d="right">➡️</button>
+      <span></span><button data-d="down">⬇️</button><span></span>`;
+    container.appendChild(dpad);
+
+    let snake, dir, nextDir, food, score, dead, speed, loopId;
+    function reset(){
+      snake=[{x:7,y:7},{x:6,y:7},{x:5,y:7}]; dir='right'; nextDir='right';
+      food=spawnFood(); score=0; dead=false; speed=160;
+      api.setScore(`النقاط: ${score}`);
+      scheduleLoop();
+    }
+    function spawnFood(){
+      let f;
+      do{ f={x:rand(0,SIZE-1),y:rand(0,SIZE-1)}; } while(snake.some(s=>s.x===f.x&&s.y===f.y));
+      return f;
+    }
+    function scheduleLoop(){
+      clearTimeout(loopId);
+      loopId = setTimeout(()=>{ tick(); if(!dead) scheduleLoop(); }, speed);
+    }
+    function tick(){
+      dir = nextDir;
+      const head = {...snake[0]};
+      if(dir==='up') head.y--; if(dir==='down') head.y++; if(dir==='left') head.x--; if(dir==='right') head.x++;
+      if(head.x<0||head.x>=SIZE||head.y<0||head.y>=SIZE||snake.some(s=>s.x===head.x&&s.y===head.y)){
+        dead=true; api.updateBest(score);
+        api.showResult('lose','خسرت! 💥', `طولك كان ${snake.length} — نقاطك: ${score}`);
+        draw(); return;
+      }
+      snake.unshift(head);
+      if(head.x===food.x && head.y===food.y){
+        score += 10; api.setScore(`النقاط: ${score}`); food=spawnFood();
+        speed = Math.max(70, speed-4);
+      } else {
+        snake.pop();
+      }
+      draw();
+    }
+    function draw(){
+      ctx.fillStyle='#1b1640'; ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle='#ffcd3c'; ctx.beginPath();
+      ctx.arc(food.x*CELL+CELL/2, food.y*CELL+CELL/2, CELL/2.4, 0, 7); ctx.fill();
+      snake.forEach((s,i)=>{
+        ctx.fillStyle = i===0 ? '#2be6d8' : '#3fe08a';
+        ctx.fillRect(s.x*CELL+1, s.y*CELL+1, CELL-2, CELL-2);
+      });
+    }
+    function setDir(d){
+      const opp = {up:'down',down:'up',left:'right',right:'left'};
+      if(opp[d] === dir) return;
+      nextDir = d;
+    }
+    dpad.addEventListener('click', e=>{
+      const b = e.target.closest('button'); if(!b) return; setDir(b.dataset.d);
+    });
+    function keyHandler(e){
+      const map = {ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'};
+      if(map[e.key]){ e.preventDefault(); setDir(map[e.key]); }
+    }
+    document.addEventListener('keydown', keyHandler);
+    reset();
+    return ()=>{ clearTimeout(loopId); document.removeEventListener('keydown', keyHandler); };
+  }
+});
+
+// ===================== 4. 2048 =====================
+GAMES.push({
+  id:'g2048', name:'2048', icon:'🔢', color:'linear-gradient(135deg,#ffcd3c,#ff5d8f)', category:'single',
+  how:'اسحب بإصبعك على اللوحة يمين أو شمال أو فوق أو تحت (أو استخدم الأسهم).\nكل الأرقام المتشابهة بتتلم مع بعض وتتضاعف.\nهدفك توصل لرقم 2048! اللعبة بتخلص لو مفيش حركات ممكنة تاني.',
+  init(container, api){
+    const N=4;
+    let grid, score;
+    const COLORS = {2:'#3a2f7a',4:'#453a8c',8:'#5847b0',16:'#7457d6',32:'#8b7bff',64:'#2be6d8',128:'#3fe08a',256:'#ffcd3c',512:'#ffb23c',1024:'#ff8a3d',2048:'#ff5d8f'};
+
+    const gridEl = el('div','grid-box'); gridEl.style.gridTemplateColumns=`repeat(${N},70px)`; gridEl.style.gridTemplateRows=`repeat(${N},70px)`;
+    container.appendChild(gridEl);
+    const hint = el('div','info-pill','اسحب بإصبعك (يمين/شمال/فوق/تحت) عشان تحرك');
+    container.appendChild(hint);
+
+    const cellsEls = [];
+    for(let i=0;i<N*N;i++){ const c=el('div','tile-btn',''); c.style.fontSize='22px'; cellsEls.push(c); gridEl.appendChild(c); }
+
+    function reset(){
+      grid = Array.from({length:N},()=>Array(N).fill(0));
+      score = 0; addRandom(); addRandom(); render(); api.setScore(`النقاط: ${score}`);
+    }
+    function addRandom(){
+      const empty=[]; grid.forEach((row,r)=>row.forEach((v,c)=>{ if(!v) empty.push([r,c]); }));
+      if(!empty.length) return;
+      const [r,c] = empty[rand(0,empty.length-1)];
+      grid[r][c] = Math.random()<0.9 ? 2 : 4;
+    }
+    function render(){
+      grid.forEach((row,r)=>row.forEach((v,c)=>{
+        const cell = cellsEls[r*N+c];
+        cell.textContent = v||'';
+        cell.style.background = v ? COLORS[v] || '#ff2d6f' : '#241d54';
+        cell.style.color = v>=8 ? '#0c0a1e' : '#f3f1ff';
+      }));
+    }
+    function slideLine(line){
+      let vals = line.filter(v=>v);
+      for(let i=0;i<vals.length-1;i++){
+        if(vals[i]===vals[i+1]){ vals[i]*=2; score+=vals[i]; vals.splice(i+1,1); }
+      }
+      while(vals.length<N) vals.push(0);
+      return vals;
+    }
+    function move(dir){
+      let moved=false;
+      const before = JSON.stringify(grid);
+      if(dir==='left'){ grid = grid.map(row=>slideLine(row)); }
+      if(dir==='right'){ grid = grid.map(row=>slideLine([...row].reverse()).reverse()); }
+      if(dir==='up'){
+        for(let c=0;c<N;c++){ const col=grid.map(r=>r[c]); const res=slideLine(col); for(let r=0;r<N;r++) grid[r][c]=res[r]; }
+      }
+      if(dir==='down'){
+        for(let c=0;c<N;c++){ const col=grid.map(r=>r[c]).reverse(); const res=slideLine(col).reverse(); for(let r=0;r<N;r++) grid[r][c]=res[r]; }
+      }
+      moved = JSON.stringify(grid) !== before;
+      if(moved){
+        addRandom(); render(); api.setScore(`النقاط: ${score}`);
+        if(grid.some(row=>row.some(v=>v===2048))){
+          api.updateBest(score); api.showResult('win','وصلت 2048! 🎉', `نقاطك: ${score}`); return;
+        }
+        if(!hasMoves()){ api.updateBest(score); api.showResult('lose','خلصت الحركات 😅', `نقاطك النهائية: ${score}`); }
+      }
+    }
+    function hasMoves(){
+      for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+        if(!grid[r][c]) return true;
+        if(c<N-1 && grid[r][c]===grid[r][c+1]) return true;
+        if(r<N-1 && grid[r][c]===grid[r+1][c]) return true;
+      }
+      return false;
+    }
+    function keyHandler(e){
+      const map={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'};
+      if(map[e.key]){ e.preventDefault(); move(map[e.key]); }
+    }
+    document.addEventListener('keydown', keyHandler);
+    let sx,sy;
+    function touchStart(e){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; }
+    function touchEnd(e){
+      const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+      if(Math.abs(dx)<20 && Math.abs(dy)<20) return;
+      if(Math.abs(dx) > Math.abs(dy)) move(dx>0?'right':'left'); else move(dy>0?'down':'up');
+    }
+    gridEl.addEventListener('touchstart', touchStart);
+    gridEl.addEventListener('touchend', touchEnd);
+    reset();
+    return ()=>{
+      document.removeEventListener('keydown', keyHandler);
+      gridEl.removeEventListener('touchstart', touchStart);
+      gridEl.removeEventListener('touchend', touchEnd);
+    };
+  }
+});
+
+// ===================== 5. ذاكرة الألوان (Simon) =====================
+GAMES.push({
+  id:'simon', name:'ذاكرة الألوان', icon:'🎨', color:'linear-gradient(135deg,#ff5d8f,#8b7bff)', category:'single',
+  how:'دوس ابدأ، وبص كويس على ترتيب الألوان اللي هتضيء.\nبعد ما تخلص الإضاءة، كرر نفس الترتيب بالظبط بدوسك على نفس الألوان.\nكل مرة تنجح، الترتيب بيطول شوية. غلطة واحدة واللعبة تخلص.',
+  init(container, api){
+    const COLORS = [
+      {name:'red', bg:'#ff5d5d', bright:'#ff9d9d'},
+      {name:'blue', bg:'#2be6d8', bright:'#8ff5ee'},
+      {name:'yellow', bg:'#ffcd3c', bright:'#ffe28a'},
+      {name:'green', bg:'#3fe08a', bright:'#8bf0bb'}
+    ];
+    let sequence=[], playerStep=0, level=0, accepting=false;
+
+    const status = el('div','info-pill','بص وسمع كويس، وبعدين كرر التتابع');
+    container.appendChild(status);
+    const gridEl = el('div','grid-box'); gridEl.style.gridTemplateColumns='repeat(2,100px)'; gridEl.style.gridTemplateRows='repeat(2,100px)';
+    container.appendChild(gridEl);
+    const pads = COLORS.map((c,i)=>{
+      const p = el('button','tile-btn'); p.style.background=c.bg; p.style.borderRadius='20px';
+      p.addEventListener('click', ()=>padTap(i));
+      gridEl.appendChild(p); return p;
+    });
+    const startBtn = el('button','btn btn-primary','ابدأ'); startBtn.style.marginTop='8px';
+    container.appendChild(startBtn);
+
+    function flash(i, dur=380){
+      return new Promise(res=>{
+        pads[i].style.background = COLORS[i].bright;
+        pads[i].style.boxShadow = `0 0 24px ${COLORS[i].bright}`;
+        setTimeout(()=>{ pads[i].style.background = COLORS[i].bg; pads[i].style.boxShadow='none'; res(); }, dur);
+      });
+    }
+    async function playSequence(){
+      accepting=false; status.textContent = 'بص كويس...';
+      await new Promise(r=>setTimeout(r,400));
+      for(const s of sequence){ await flash(s); await new Promise(r=>setTimeout(r,180)); }
+      playerStep=0; accepting=true; status.textContent = 'دورك! كرر التتابع';
+    }
+    function padTap(i){
+      if(!accepting) return;
+      flash(i,200);
+      if(sequence[playerStep] === i){
+        playerStep++;
+        if(playerStep === sequence.length){
+          level++; api.setScore(`المستوى: ${level}`);
+          accepting=false;
+          setTimeout(()=>{ sequence.push(rand(0,3)); playSequence(); }, 500);
+        }
+      } else {
+        accepting=false;
+        api.updateBest(level);
+        api.showResult('lose','غلط! 😅', `وصلت لمستوى ${level}`);
+      }
+    }
+    function start(){
+      sequence=[rand(0,3)]; level=0; api.setScore(`المستوى: ${level}`);
+      playSequence();
+    }
+    startBtn.addEventListener('click', start);
+    api.setScore(`المستوى: 0`);
+    return ()=>{};
+  }
+});
+
+// ===================== 6. اضرب الخلد =====================
+GAMES.push({
+  id:'whack', name:'اضرب الخلد', icon:'🐹', color:'linear-gradient(135deg,#8b7bff,#ff5d8f)', category:'single',
+  how:'الخلد هيطلع من حفرة عشوائية كل شوية.\nدوس عليه بسرعة قبل ما يختفي عشان تاخد نقطة.\nعندك 30 ثانية، اجمع أكبر عدد نقط ممكن قبل ما الوقت يخلص.',
+  init(container, api){
+    let score=0, timeLeft=30, molePos=-1, running=true, moleTimeout=null;
+
+    const info = el('div','pill-row');
+    info.innerHTML = `<div class="info-pill">⏱️ <b id="wkTime">30</b></div><div class="info-pill">⭐ <b id="wkScore">0</b></div>`;
+    container.appendChild(info);
+
+    const gridEl = el('div','grid-box'); gridEl.style.gridTemplateColumns='repeat(3,84px)'; gridEl.style.gridTemplateRows='repeat(3,84px)';
+    container.appendChild(gridEl);
+    const holes = [];
+    for(let i=0;i<9;i++){
+      const h = el('button','tile-btn','🕳️'); h.style.fontSize='34px'; h.style.borderRadius='50%';
+      h.addEventListener('click', ()=>{
+        if(h.dataset.active==='1'){ score++; document.getElementById('wkScore').textContent=score; api.setScore(`⭐ ${score}`); h.dataset.active='0'; h.textContent='🕳️'; }
+      });
+      gridEl.appendChild(h); holes.push(h);
+    }
+    function popMole(){
+      if(!running) return;
+      if(molePos>=0){ holes[molePos].dataset.active='0'; holes[molePos].textContent='🕳️'; }
+      molePos = rand(0,8);
+      holes[molePos].dataset.active='1'; holes[molePos].textContent='🐹';
+      moleTimeout = setTimeout(popMole, rand(550,900));
+    }
+    const iv = setInterval(()=>{
+      timeLeft--; document.getElementById('wkTime').textContent = timeLeft;
+      if(timeLeft<=0){
+        running=false; clearInterval(iv); clearTimeout(moleTimeout);
+        holes.forEach(h=>{h.textContent='🕳️'; h.dataset.active='0';});
+        api.updateBest(score);
+        api.showResult(score>=15?'win':'draw', score>=15? 'أداء رهيب! 🎉':'انتهى الوقت ⏱️', `نقاطك: ${score}`);
+      }
+    },1000);
+    popMole();
+    api.setScore(`⭐ 0`);
+    return ()=>{ running=false; clearInterval(iv); clearTimeout(moleTimeout); };
+  }
+});
+
+// ===================== 7. لغز الخانة الفارغة =====================
+GAMES.push({
+  id:'puzzle15', name:'لغز الأرقام', icon:'🧩', color:'linear-gradient(135deg,#2be6d8,#3fe08a)', category:'single',
+  how:'اللوحة فيها أرقام من 1 لـ15 ومكان فاضي واحد.\nدوس على أي رقم جنب المكان الفاضي عشان ينتقل مكانه.\nرتب الأرقام بالترتيب من 1 لـ15 بأقل عدد حركات ممكن عشان تفوز.',
+  init(container, api){
+    const N=4;
+    let tiles, moves;
+
+    const info = el('div','pill-row'); info.innerHTML = `<div class="info-pill">🔁 حركات: <b id="pzMoves">0</b></div>`;
+    container.appendChild(info);
+    const gridEl = el('div','grid-box'); gridEl.style.gridTemplateColumns=`repeat(${N},70px)`; gridEl.style.gridTemplateRows=`repeat(${N},70px)`;
+    container.appendChild(gridEl);
+    const cellsEls = [];
+    for(let i=0;i<N*N;i++){ const c=el('button','tile-btn',''); c.style.fontSize='22px'; c.addEventListener('click', ()=>tryMove(i)); cellsEls.push(c); gridEl.appendChild(c); }
+
+    function isSolvable(arr){
+      const a = arr.filter(v=>v!==0);
+      let inv=0;
+      for(let i=0;i<a.length;i++) for(let j=i+1;j<a.length;j++) if(a[i]>a[j]) inv++;
+      const blankRow = Math.floor(arr.indexOf(0)/N);
+      if(N%2===1) return inv%2===0;
+      return (inv + blankRow) % 2 === 1;
+    }
+    function shuffleTiles(){
+      let arr;
+      do{ arr = shuffle([...Array(N*N).keys()]); } while(!isSolvable(arr) || isSolved(arr));
+      return arr;
+    }
+    function isSolved(arr){ for(let i=0;i<N*N-1;i++) if(arr[i]!==i+1 && !(i===N*N-1)) {} return arr.slice(0,N*N-1).every((v,i)=>v===i+1) && arr[N*N-1]===0; }
+    function render(){
+      tiles.forEach((v,i)=>{
+        const c = cellsEls[i];
+        c.textContent = v===0?'':v;
+        c.style.background = v===0 ? 'transparent' : '#241d54';
+        c.style.boxShadow = v===0 ? 'none' : '';
+      });
+      document.getElementById('pzMoves').textContent = moves;
+    }
+    function tryMove(i){
+      const blank = tiles.indexOf(0);
+      const r1=Math.floor(i/N), c1=i%N, r2=Math.floor(blank/N), c2=blank%N;
+      if(Math.abs(r1-r2)+Math.abs(c1-c2) === 1){
+        [tiles[i],tiles[blank]] = [tiles[blank],tiles[i]];
+        moves++; render(); api.setScore(`حركات: ${moves}`);
+        if(isSolved(tiles)){ api.updateBest(-moves); api.showResult('win','فرقعت اللغز! 🎉', `عدد الحركات: ${moves}`); }
+      }
+    }
+    function reset(){ tiles = shuffleTiles(); moves=0; render(); api.setScore('حركات: 0'); }
+    reset();
+    return ()=>{};
+  }
+});
+
+// ===================== 8. اختبار رد الفعل =====================
+GAMES.push({
+  id:'reaction', name:'اختبار السرعة', icon:'⚡', color:'linear-gradient(135deg,#ffcd3c,#ff8a3d)', category:'single',
+  how:'دوس على المربع عشان تبدأ.\nهيتلون أحمر وتستنى، متدوسش لحد ما يتحول لونه لأخضر.\nلو دوست بدري هتضطر تبدأ تاني. اللي بيدوس أسرع بعد ما يخضر بياخد وقت أحسن.',
+  init(container, api){
+    let state='idle', startT=0, timeoutId=null, best=null, attempts=0, total=0;
+
+    const info = el('div','pill-row'); info.innerHTML = `<div class="info-pill">🎯 محاولات: <b id="rxAtt">0</b></div><div class="info-pill">⚡ أفضل وقت: <b id="rxBest">-</b></div>`;
+    container.appendChild(info);
+
+    const box = el('button','tile-btn','دوس عشان تبدأ');
+    box.style.width='260px'; box.style.height='260px'; box.style.borderRadius='24px'; box.style.fontSize='20px'; box.style.background='#241d54';
+    container.appendChild(box);
+
+    function toWait(){
+      state='waiting'; box.style.background='#ff5d5d'; box.textContent='استنى اللون يتغير...';
+      const delay = rand(1500,4000);
+      timeoutId = setTimeout(()=>{ state='go'; box.style.background='#3fe08a'; box.textContent='دوس دلوقتي!'; startT=performance.now(); }, delay);
+    }
+    box.addEventListener('click', ()=>{
+      if(state==='idle'){ toWait(); return; }
+      if(state==='waiting'){
+        clearTimeout(timeoutId);
+        state='idle'; box.style.background='#241d54'; box.textContent='بدري! دوس عشان تجرب تاني';
+        return;
+      }
+      if(state==='go'){
+        const rt = Math.round(performance.now()-startT);
+        attempts++; total++;
+        if(best===null || rt<best) best=rt;
+        document.getElementById('rxAtt').textContent = attempts;
+        document.getElementById('rxBest').textContent = best+'ms';
+        api.setScore(`أفضل: ${best}ms`);
+        state='idle'; box.style.background='#241d54'; box.textContent = `${rt}ms — دوس تاني`;
+        if(attempts>=5){
+          api.updateBest(-best);
+          api.showResult('win','خلصت 5 محاولات! 🏁', `أسرع وقت: ${best}ms`);
+          attempts=0;
+        }
+      }
+    });
+    api.setScore('أفضل: -');
+    return ()=> clearTimeout(timeoutId);
+  }
+});
+
+// ===================== 9. تحدي الرياضيات =====================
+GAMES.push({
+  id:'mathblitz', name:'تحدي الرياضيات', icon:'➗', color:'linear-gradient(135deg,#3fe08a,#ffcd3c)', category:'single',
+  how:'هتظهرلك مسألة حسابية بسيطة (جمع، طرح، أو ضرب).\nدوس على الإجابة الصحيحة من بين 4 اختيارات بأسرع ما تقدر.\nعندك دقيقة كاملة، جاوب على أكبر عدد أسئلة صح.',
+  init(container, api){
+    let score=0, timeLeft=60, running=true, correctAns=0;
+
+    const info = el('div','pill-row'); info.innerHTML = `<div class="info-pill">⏱️ <b id="mbTime">60</b></div><div class="info-pill">⭐ <b id="mbScore">0</b></div>`;
+    container.appendChild(info);
+    const q = el('div','display'); q.style.fontSize='40px'; q.style.fontWeight='800'; q.style.margin='14px 0';
+    container.appendChild(q);
+    const optWrap = el('div','pill-row');
+    container.appendChild(optWrap);
+
+    function newQuestion(){
+      const ops = ['+','-','×'];
+      const op = ops[rand(0,2)];
+      let a=rand(2,20), b=rand(2,20);
+      if(op==='-' && b>a) [a,b]=[b,a];
+      if(op==='×'){ a=rand(2,12); b=rand(2,12); }
+      correctAns = op==='+' ? a+b : op==='-' ? a-b : a*b;
+      q.textContent = `${a} ${op} ${b} = ?`;
+      const opts = new Set([correctAns]);
+      let guard=0;
+      while(opts.size<4 && guard<50){
+        guard++;
+        const delta = rand(1,9) * (rand(0,1)?1:-1);
+        const candidate = correctAns + delta;
+        if(candidate !== correctAns) opts.add(candidate);
+      }
+      const arr = shuffle([...opts]);
+      optWrap.innerHTML='';
+      arr.forEach(v=>{
+        const b2 = el('button','tile-btn', v); b2.style.width='70px'; b2.style.height='58px'; b2.style.fontSize='20px';
+        b2.addEventListener('click', ()=>{
+          if(!running) return;
+          if(v===correctAns){ score++; document.getElementById('mbScore').textContent=score; api.setScore(`⭐ ${score}`); }
+          newQuestion();
+        });
+        optWrap.appendChild(b2);
+      });
+    }
+    const iv = setInterval(()=>{
+      timeLeft--; document.getElementById('mbTime').textContent=timeLeft;
+      if(timeLeft<=0){
+        running=false; clearInterval(iv);
+        api.updateBest(score);
+        api.showResult(score>=10?'win':'draw', score>=10?'عبقري رياضيات! 🎉':'انتهى الوقت ⏱️', `إجاباتك الصحيحة: ${score}`);
+      }
+    },1000);
+    newQuestion();
+    api.setScore('⭐ 0');
+    return ()=> clearInterval(iv);
+  }
+});
+
+// ===================== 10. تخمين الكلمة =====================
+GAMES.push({
+  id:'hangman', name:'تخمين الكلمة', icon:'🔤', color:'linear-gradient(135deg,#ff5d8f,#ffcd3c)', category:'single',
+  how:'فيه كلمة سرية متمثلة بخطوط.\nدوس على الحروف اللي فاكر إنها موجودة في الكلمة.\nكل غلطة بتاخد منك محاولة من أصل 6. خمّن الكلمة قبل ما تخلص محاولاتك.',
+  init(container, api){
+    const WORDS = ['تفاحة','مدرسة','كمبيوتر','شمس','قمر','بحر','كتاب','قطار','موز','حديقة','مفتاح','سيارة','نافذة','سمكة','جبل'];
+    const LETTERS = 'ابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
+    let word, guessed, wrong, lives=6;
+
+    const info = el('div','pill-row'); info.innerHTML = `<div class="info-pill">❤️ محاولات متبقية: <b id="hgLives">6</b></div>`;
+    container.appendChild(info);
+    const wordDisp = el('div','display'); wordDisp.style.fontSize='30px'; wordDisp.style.letterSpacing='6px'; wordDisp.style.margin='16px 0'; wordDisp.style.fontWeight='800';
+    container.appendChild(wordDisp);
+    const kb = el('div'); kb.style.display='flex'; kb.style.flexWrap='wrap'; kb.style.gap='6px'; kb.style.justifyContent='center'; kb.style.maxWidth='360px';
+    container.appendChild(kb);
+
+    const btns = {};
+    LETTERS.forEach(L=>{
+      const b = el('button','tile-btn',L); b.style.width='38px'; b.style.height='38px'; b.style.fontSize='16px';
+      b.addEventListener('click', ()=>guess(L,b));
+      kb.appendChild(b); btns[L]=b;
+    });
+
+    function render(){
+      wordDisp.textContent = word.split('').map(ch=> guessed.has(ch)?ch:'ـ').join(' ');
+      document.getElementById('hgLives').textContent = lives;
+    }
+    function guess(L,b){
+      if(b.disabled || lives<=0) return;
+      b.disabled=true;
+      if(word.includes(L)){
+        guessed.add(L); b.style.background='#3fe08a';
+        render();
+        if(word.split('').every(ch=>guessed.has(ch))){
+          api.updateBest(lives);
+          api.showResult('win','عرفت الكلمة! 🎉', `الكلمة: ${word} — محاولات باقية: ${lives}`);
+        }
+      } else {
+        lives--; b.style.background='#ff5d5d'; render();
+        if(lives<=0){
+          api.showResult('lose','خسرت 😅', `الكلمة كانت: ${word}`);
+        }
+      }
+    }
+    function reset(){
+      word = WORDS[rand(0,WORDS.length-1)];
+      guessed = new Set(); lives=6;
+      Object.values(btns).forEach(b=>{ b.disabled=false; b.style.background=''; });
+      render(); api.setScore(`❤️ ${lives}`);
+    }
+    reset();
+    return ()=>{};
+  }
+});
+
+// ===================== 11. أربح أربعة (ثنائي) =====================
+GAMES.push({
+  id:'connect4', name:'أربح أربعة', icon:'🔴', color:'linear-gradient(135deg,#ff5d5d,#ffcd3c)', category:'two',
+  how:'اختار حجم اللوحة الأول.\nكل لاعب بالتبادل يدوس على عمود عشان يوقع قطعته فيه (🔴 أو 🟡).\nأول واحد يعمل 4 قطع متصلة (أفقي أو رأسي أو قطري) يكسب الجولة.',
+  init(container, api){
+    let COLS=7, ROWS=6;
+    let board, turn, over;
+
+    const LEVELS = [
+      {key:'small', label:'🟢 مبتدئ 6×5', cols:6, rows:5},
+      {key:'normal', label:'🟡 عادي 7×6', cols:7, rows:6},
+      {key:'big', label:'🔴 صعب 9×7', cols:9, rows:7}
+    ];
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار مستوى الصعوبة (حجم الطاولة)</div>';
+    container.appendChild(menu);
+    const levelBtns = el('div','pill-row'); menu.appendChild(levelBtns);
+    LEVELS.forEach(lv=>{
+      const b = el('button','btn btn-secondary', lv.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ COLS=lv.cols; ROWS=lv.rows; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); reset(); });
+      levelBtns.appendChild(b);
+    });
+
+    const gameArea = el('div','hidden'); gameArea.style.display='flex'; gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px';
+    container.appendChild(gameArea);
+    const status = el('div','info-pill','دور: 🔴');
+    gameArea.appendChild(status);
+    const gridEl = el('div','grid-box');
+    gridEl.style.background='#1b1640'; gridEl.style.padding='6px'; gridEl.style.borderRadius='16px'; gridEl.style.direction='ltr';
+    gameArea.appendChild(gridEl);
+
+    const cellsEls = [];
+    function build(){
+      gridEl.innerHTML='';
+      gridEl.style.gridTemplateColumns=`repeat(${COLS},${COLS>7?32:40}px)`;
+      gridEl.style.gridTemplateRows=`repeat(${ROWS},${COLS>7?32:40}px)`;
+      cellsEls.length=0;
+      for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+        const cell = el('button','tile-btn',''); cell.style.borderRadius='50%'; cell.style.background='#241d54';
+        cell.addEventListener('click', ()=>drop(c));
+        gridEl.appendChild(cell); cellsEls.push(cell);
+      }
+    }
+    function drop(c){
+      if(over) return;
+      for(let r=ROWS-1;r>=0;r--){
+        if(!board[r][c]){
+          board[r][c]=turn; render();
+          if(checkWin(r,c)){ over=true; api.showResult('win', `فاز ${turn==='R'?'🔴':'🟡'}!`, 'برافو! دور تاني يبدأ'); return; }
+          if(board.every(row=>row.every(v=>v))){ over=true; api.showResult('draw','تعادل! 🤝','الطاولة اتملت من غير فايز'); return; }
+          turn = turn==='R'?'Y':'R';
+          status.textContent = `دور: ${turn==='R'?'🔴':'🟡'}`;
+          api.setScore(`دور: ${turn==='R'?'🔴':'🟡'}`);
+          return;
+        }
+      }
+    }
+    function checkWin(r,c){
+      const val = board[r][c];
+      const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+      for(const [dr,dc] of dirs){
+        let count=1;
+        for(let s=1;s<4;s++){ const rr=r+dr*s, cc=c+dc*s; if(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS&&board[rr][cc]===val) count++; else break; }
+        for(let s=1;s<4;s++){ const rr=r-dr*s, cc=c-dc*s; if(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS&&board[rr][cc]===val) count++; else break; }
+        if(count>=4) return true;
+      }
+      return false;
+    }
+    function render(){
+      board.forEach((row,r)=>row.forEach((v,c)=>{
+        const cell = cellsEls[r*COLS+c];
+        cell.style.background = v==='R' ? '#ff5d5d' : v==='Y' ? '#ffcd3c' : '#241d54';
+      }));
+    }
+    function reset(){
+      board = Array.from({length:ROWS},()=>Array(COLS).fill(null));
+      turn='R'; over=false; build(); render();
+      status.textContent='دور: 🔴'; api.setScore('دور: 🔴');
+    }
+    api.setScore('اختار المستوى');
+    return ()=>{};
+  }
+});
+
+// ===================== 12. حجر ورقة مقص (ثنائي) =====================
+GAMES.push({
+  id:'rps', name:'حجر ورقة مقص', icon:'✊', color:'linear-gradient(135deg,#8b7bff,#3fe08a)', category:'two',
+  how:'اختار مدة الجولة. اللاعب الأول يختار ✊ أو 🖐️ أو ✌️.\nبعدين هيتقال له يمرر التابلت للاعب التاني عشان يختار هو كمان من غير ما يشوف اختيار الأول.\nالحجر بيكسر المقص، المقص بيقص الورقة، والورقة بتغطي الحجر. أول واحد يوصل للعدد المطلوب يبطل الجولة.',
+  init(container, api){
+    const CHOICES = [{k:'rock',e:'✊'},{k:'paper',e:'🖐️'},{k:'scissors',e:'✌️'}];
+    let p1=null, p2=null, turnPlayer=1, scores={p1:0,p2:0}, WIN_TARGET=3;
+
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار مستوى الجولة</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    [{label:'⚡ سريعة (أول 3)',v:3},{label:'⭐ عادية (أول 5)',v:5},{label:'🔥 طويلة (أول 7)',v:7}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ WIN_TARGET=o.v; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); buildChoices(); });
+      menuBtns.appendChild(b);
+    });
+
+    const gameArea = el('div','hidden'); gameArea.style.display='flex'; gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px';
+    container.appendChild(gameArea);
+    const status = el('div','info-pill','دور اللاعب 1: اختار');
+    gameArea.appendChild(status);
+    const scoreP = el('div','info-pill', `🔵 <b id="rpsP1">0</b> &nbsp;-&nbsp; 🟠 <b id="rpsP2">0</b>`);
+    gameArea.appendChild(scoreP);
+    const wrap = el('div','pill-row');
+    gameArea.appendChild(wrap);
+    const hint = el('div','info-pill','بعد ما اللاعب 1 يختار، هنقول له يمرر التابلت');
+    gameArea.appendChild(hint);
+
+    function buildChoices(){
+      wrap.innerHTML='';
+      CHOICES.forEach(c=>{
+        const b = el('button','tile-btn',c.e); b.style.width='72px'; b.style.height='72px'; b.style.fontSize='30px';
+        b.addEventListener('click', ()=>choose(c.k));
+        wrap.appendChild(b);
+      });
+    }
+    function choose(k){
+      if(turnPlayer===1){
+        p1=k; turnPlayer=2;
+        status.textContent='مرر التابلت للاعب 2 👉';
+        hint.textContent='اللاعب 2: دوس أي حتة عشان تشوف اختيارك';
+        wrap.innerHTML='';
+        const passBtn = el('button','btn btn-primary','اللاعب 2 جاهز');
+        passBtn.addEventListener('click', buildChoices);
+        wrap.appendChild(passBtn);
+        return;
+      }
+      p2=k; resolve();
+    }
+    function resolve(){
+      let result;
+      if(p1===p2) result='draw';
+      else if(
+        (p1==='rock'&&p2==='scissors') || (p1==='paper'&&p2==='rock') || (p1==='scissors'&&p2==='paper')
+      ) result='p1'; else result='p2';
+
+      const e1 = CHOICES.find(c=>c.k===p1).e, e2 = CHOICES.find(c=>c.k===p2).e;
+      if(result==='draw'){
+        status.textContent = `${e1} = ${e2} تعادل!`;
+      } else {
+        scores[result]++;
+        document.getElementById('rpsP1').textContent = scores.p1;
+        document.getElementById('rpsP2').textContent = scores.p2;
+        status.textContent = `${e1} ضد ${e2} — فاز ${result==='p1'?'🔵 اللاعب 1':'🟠 اللاعب 2'}`;
+      }
+      api.setScore(`🔵 ${scores.p1} - 🟠 ${scores.p2}`);
+      hint.textContent='';
+      wrap.innerHTML='';
+      const again = el('button','btn btn-primary','الجولة الجاية');
+      again.addEventListener('click', ()=>{
+        p1=null;p2=null;turnPlayer=1;
+        status.textContent='دور اللاعب 1: اختار'; hint.textContent='بعد ما اللاعب 1 يختار، هنقول له يمرر التابلت';
+        buildChoices();
+      });
+      wrap.appendChild(again);
+      if(scores.p1>=WIN_TARGET || scores.p2>=WIN_TARGET){
+        api.showResult('win', `${scores.p1>=WIN_TARGET?'🔵 اللاعب 1':'🟠 اللاعب 2'} بطل الجولة!`, `النتيجة النهائية ${scores.p1} - ${scores.p2}`);
+        scores={p1:0,p2:0};
+      }
+    }
+    api.setScore('اختار المستوى');
+    return ()=>{};
+  }
+});
+
+// ===================== 13. النقاط والمربعات (ثنائي) =====================
+GAMES.push({
+  id:'dotsboxes', name:'النقاط والمربعات', icon:'⬜', color:'linear-gradient(135deg,#2be6d8,#ff5d8f)', category:'two',
+  how:'اختار حجم اللوحة. فيه نقط متوزعة وخطوط بينها.\nكل لاعب بالتبادل يدوس على خط عشان يرسمه.\nلو رسمت آخر خط يكمّل مربع، المربع بيبقى لك وتاخد دور زيادة. اللي يكسب أكبر عدد مربعات يفوز.',
+  init(container, api){
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار مستوى الصعوبة (حجم اللوحة)</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    const gameArea = el('div','hidden'); gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px'; gameArea.style.display='flex';
+    container.appendChild(gameArea);
+
+    const status = el('div','info-pill','دور: 🔵 اللاعب 1');
+    gameArea.appendChild(status);
+    const scoreP = el('div','info-pill', `🔵 <b id="dbA">0</b> &nbsp;-&nbsp; 🟣 <b id="dbB">0</b>`);
+    gameArea.appendChild(scoreP);
+    const board = el('div'); board.style.position='relative'; board.style.margin='6px auto';
+    board.style.background='#1b1640'; board.style.borderRadius='16px';
+    gameArea.appendChild(board);
+
+    let N=2, turn='A', scores={A:0,B:0}, edgesFilled={}, boxOwner={};
+
+    [{label:'🟢 سهل 2×2', n:2},{label:'🟡 عادي 3×3', n:3},{label:'🔴 صعب 4×4', n:4}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ N=o.n; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); buildBoard(); });
+      menuBtns.appendChild(b);
+    });
+
+    function buildBoard(){
+      const SPACING = N===2?100:N===3?72:56;
+      const SIZE = SPACING*N + 40;
+      board.style.width = SIZE+'px'; board.style.height = SIZE+'px';
+      board.innerHTML='';
+      turn='A'; scores={A:0,B:0}; edgesFilled={}; boxOwner={};
+      function pos(i,j){ return {x:20+i*SPACING, y:20+j*SPACING}; }
+      for(let i=0;i<=N;i++) for(let j=0;j<=N;j++){
+        const {x,y} = pos(i,j);
+        const dot = el('div'); dot.style.position='absolute'; dot.style.width='10px'; dot.style.height='10px';
+        dot.style.borderRadius='50%'; dot.style.background='#a49bd6'; dot.style.left=(x-5)+'px'; dot.style.top=(y-5)+'px';
+        board.appendChild(dot);
+      }
+      const edgeBtns={};
+      for(let i=0;i<N;i++) for(let j=0;j<=N;j++){
+        const p = pos(i,j);
+        const btn = el('button'); btn.style.position='absolute'; btn.style.left=(p.x+8)+'px'; btn.style.top=(p.y-6)+'px';
+        btn.style.width=(SPACING-16)+'px'; btn.style.height='12px'; btn.style.border='none'; btn.style.borderRadius='6px';
+        btn.style.background='#3a3470'; btn.style.cursor='pointer';
+        const key=`H${i}_${j}`; btn.addEventListener('click', ()=>claimEdge(key, btn));
+        board.appendChild(btn); edgeBtns[key]=btn;
+      }
+      for(let i=0;i<=N;i++) for(let j=0;j<N;j++){
+        const p = pos(i,j);
+        const btn = el('button'); btn.style.position='absolute'; btn.style.left=(p.x-6)+'px'; btn.style.top=(p.y+8)+'px';
+        btn.style.width='12px'; btn.style.height=(SPACING-16)+'px'; btn.style.border='none'; btn.style.borderRadius='6px';
+        btn.style.background='#3a3470'; btn.style.cursor='pointer';
+        const key=`V${i}_${j}`; btn.addEventListener('click', ()=>claimEdge(key, btn));
+        board.appendChild(btn); edgeBtns[key]=btn;
+      }
+      const boxEls={};
+      for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+        const p = pos(i,j);
+        const b = el('div',''); b.style.position='absolute'; b.style.left=(p.x+8)+'px'; b.style.top=(p.y+8)+'px';
+        b.style.width=(SPACING-16)+'px'; b.style.height=(SPACING-16)+'px'; b.style.display='flex'; b.style.alignItems='center'; b.style.justifyContent='center';
+        b.style.fontSize= N>=4?'14px':'20px'; b.style.borderRadius='10px';
+        board.appendChild(b); boxEls[`${i}_${j}`]=b;
+      }
+      function boxComplete(i,j){
+        return edgesFilled[`H${i}_${j}`] && edgesFilled[`H${i}_${j+1}`] && edgesFilled[`V${i}_${j}`] && edgesFilled[`V${i+1}_${j}`];
+      }
+      function claimEdge(key, btn){
+        if(edgesFilled[key]) return;
+        edgesFilled[key] = turn;
+        btn.style.background = turn==='A' ? '#2be6d8' : '#ff5d8f';
+        let gotBox=false;
+        for(let i=0;i<N;i++) for(let j=0;j<N;j++){
+          const bk=`${i}_${j}`;
+          if(!boxOwner[bk] && boxComplete(i,j)){
+            boxOwner[bk]=turn; scores[turn]++; gotBox=true;
+            boxEls[bk].style.background = turn==='A' ? 'rgba(43,230,216,.25)' : 'rgba(255,93,143,.25)';
+            boxEls[bk].textContent = turn==='A' ? '🔵' : '🟣';
+          }
+        }
+        document.getElementById('dbA').textContent = scores.A;
+        document.getElementById('dbB').textContent = scores.B;
+        api.setScore(`🔵 ${scores.A} - 🟣 ${scores.B}`);
+        if(Object.keys(boxOwner).length === N*N){
+          if(scores.A===scores.B) api.showResult('draw','تعادل! 🤝', `${scores.A} - ${scores.B}`);
+          else api.showResult('win', `فاز ${scores.A>scores.B?'🔵 اللاعب 1':'🟣 اللاعب 2'}!`, `النتيجة ${scores.A} - ${scores.B}`);
+          return;
+        }
+        if(!gotBox){ turn = turn==='A'?'B':'A'; }
+        status.textContent = `دور: ${turn==='A'?'🔵 اللاعب 1':'🟣 اللاعب 2'}`;
+      }
+      status.textContent='دور: 🔵 اللاعب 1'; api.setScore('🔵 0 - 🟣 0');
+    }
+    api.setScore('اختار المستوى');
+    return ()=>{};
+  }
+});
+
+// ===================== 14. بونج (ثنائي) =====================
+GAMES.push({
+  id:'pong', name:'بونج', icon:'🏓', color:'linear-gradient(135deg,#3fe08a,#8b7bff)', category:'two',
+  how:'اختار سرعة الكورة.\nاللاعب الشمال يحط صباعه في النص الشمال من الشاشة ويحركه فوق وتحت، واللاعب اليمين يحط صباعه في النص اليمين.\nحاول ترجع الكورة بالمضرب بتاعك من غير ما تفوتك. أول واحد يوصل 5 نقط يكسب.',
+  init(container, api){
+    const W=300, H=200, PW=8, PH=48;
+    let SPEED=2.4;
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار سرعة الكورة</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    const gameArea = el('div','hidden'); gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px'; gameArea.style.display='flex';
+    container.appendChild(gameArea);
+    [{label:'🟢 بطيئة',v:1.8},{label:'🟡 عادية',v:2.4},{label:'🔴 سريعة',v:3.3}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ SPEED=o.v; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); resetBall(1); loop(); });
+      menuBtns.appendChild(b);
+    });
+
+    const canvas = el('canvas'); canvas.width=W; canvas.height=H;
+    gameArea.appendChild(canvas);
+    const hint = el('div','info-pill','اللاعب الشمال يلمس نص الشاشة الشمال، اللاعب اليمين يلمس نص الشاشة اليمين');
+    gameArea.appendChild(hint);
+    const ctx = canvas.getContext('2d');
+
+    let leftY=H/2-PH/2, rightY=H/2-PH/2, ballX=W/2, ballY=H/2, vx=2.4, vy=1.6, scoreL=0, scoreR=0, running=true, raf;
+
+    function resetBall(dir){ ballX=W/2; ballY=H/2; vx = SPEED*dir; vy = (Math.random()<0.5?-1:1)*(SPEED*0.66); }
+
+    function draw(){
+      ctx.fillStyle='#1b1640'; ctx.fillRect(0,0,W,H);
+      ctx.setLineDash([4,6]); ctx.strokeStyle='#3a3470'; ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,H); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle='#2be6d8'; ctx.fillRect(4, leftY, PW, PH);
+      ctx.fillStyle='#ff5d8f'; ctx.fillRect(W-4-PW, rightY, PW, PH);
+      ctx.fillStyle='#ffcd3c'; ctx.beginPath(); ctx.arc(ballX,ballY,6,0,7); ctx.fill();
+      ctx.fillStyle='#f3f1ff'; ctx.font='bold 18px Cairo';
+      ctx.fillText(scoreL, W/2-34, 24); ctx.fillText(scoreR, W/2+20, 24);
+    }
+    function loop(){
+      if(!running) return;
+      ballX += vx; ballY += vy;
+      if(ballY<6 || ballY>H-6) vy *= -1;
+      if(ballX-6 < 4+PW && ballY>leftY && ballY<leftY+PH){ vx = Math.abs(vx)*1.03; ballX=4+PW+6; }
+      if(ballX+6 > W-4-PW && ballY>rightY && ballY<rightY+PH){ vx = -Math.abs(vx)*1.03; ballX=W-4-PW-6; }
+      if(ballX<0){ scoreR++; checkEnd(); resetBall(1); }
+      if(ballX>W){ scoreL++; checkEnd(); resetBall(-1); }
+      draw();
+      raf = requestAnimationFrame(loop);
+    }
+    function checkEnd(){
+      api.setScore(`${scoreL} - ${scoreR}`);
+      if(scoreL>=5 || scoreR>=5){
+        running=false;
+        api.showResult('win', `فاز ${scoreL>scoreR?'🔵 اللاعب الشمال':'🟣 اللاعب اليمين'}!`, `النتيجة ${scoreL} - ${scoreR}`);
+      }
+    }
+    function handleTouch(e){
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const scaleY = H/rect.height, scaleX = W/rect.width;
+      for(const t of e.touches){
+        const x = (t.clientX-rect.left)*scaleX, y=(t.clientY-rect.top)*scaleY;
+        if(x < W/2) leftY = Math.min(H-PH, Math.max(0, y-PH/2));
+        else rightY = Math.min(H-PH, Math.max(0, y-PH/2));
+      }
+    }
+    canvas.addEventListener('touchstart', handleTouch, {passive:false});
+    canvas.addEventListener('touchmove', handleTouch, {passive:false});
+    function mouseHandler(e){
+      const rect = canvas.getBoundingClientRect();
+      const scaleY = H/rect.height, scaleX = W/rect.width;
+      const x=(e.clientX-rect.left)*scaleX, y=(e.clientY-rect.top)*scaleY;
+      if(x<W/2) leftY = Math.min(H-PH, Math.max(0, y-PH/2)); else rightY = Math.min(H-PH, Math.max(0, y-PH/2));
+    }
+    canvas.addEventListener('mousemove', mouseHandler);
+    draw();
+    api.setScore('اختار المستوى');
+    return ()=>{ running=false; cancelAnimationFrame(raf); canvas.removeEventListener('touchstart',handleTouch); canvas.removeEventListener('touchmove',handleTouch); canvas.removeEventListener('mousemove',mouseHandler); };
+  }
+});
+
+// ===================== 15. معركة النقر (ثنائي) =====================
+GAMES.push({
+  id:'tapbattle', name:'معركة النقر', icon:'👊', color:'linear-gradient(135deg,#ff8a3d,#ff5d5d)', category:'two',
+  how:'اختار مدة الجولة.\nكل لاعب يحط صباعه على نصه من الشاشة.\nلما تدوس ابدأ، دوسوا بأسرع ما تقدروا لحد ما الوقت يخلص. اللي عنده نقرات أكتر يكسب.',
+  init(container, api){
+    let countL=0, countR=0, running=false, timeLeft=5, ROUND=5;
+
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار مدة الجولة</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    const gameArea = el('div','hidden'); gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px'; gameArea.style.display='flex'; gameArea.style.width='100%';
+    container.appendChild(gameArea);
+    [{label:'⚡ 5 ثواني',v:5},{label:'🔥 8 ثواني',v:8},{label:'💪 12 ثانية',v:12}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ ROUND=o.v; timeLeft=o.v; document.getElementById('tbTime').textContent=o.v; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); });
+      menuBtns.appendChild(b);
+    });
+
+    const hint = el('div','info-pill','كل واحد يحط صباعه على نصه ويستنى "ابدأ"');
+    gameArea.appendChild(hint);
+    const info = el('div','info-pill','⏱️ <b id="tbTime">5</b>');
+    gameArea.appendChild(info);
+
+    const splitWrap = el('div','split'); splitWrap.style.height='260px'; splitWrap.style.width='100%';
+    gameArea.appendChild(splitWrap);
+    const left = el('div',''); left.style.background='#2be6d8'; left.style.color='#0c0a1e'; left.innerHTML = `<div style="font-size:34px" id="tbL">0</div><div>اللاعب الشمال</div>`;
+    const right = el('div',''); right.style.background='#ff5d8f'; right.innerHTML = `<div style="font-size:34px" id="tbR">0</div><div>اللاعب اليمين</div>`;
+    splitWrap.appendChild(left); splitWrap.appendChild(right);
+
+    const startBtn = el('button','btn btn-primary','ابدأ المعركة');
+    gameArea.appendChild(startBtn);
+
+    function onDown(side){
+      if(!running) return;
+      if(side==='L'){ countL++; document.getElementById('tbL').textContent=countL; }
+      else { countR++; document.getElementById('tbR').textContent=countR; }
+    }
+    left.addEventListener('pointerdown', ()=>onDown('L'));
+    right.addEventListener('pointerdown', ()=>onDown('R'));
+
+    let iv=null;
+    startBtn.addEventListener('click', ()=>{
+      countL=0; countR=0; timeLeft=ROUND; running=false;
+      document.getElementById('tbL').textContent=0; document.getElementById('tbR').textContent=0;
+      startBtn.disabled=true; hint.textContent='استعد...';
+      let pre=2;
+      const preIv = setInterval(()=>{
+        pre--; hint.textContent = pre>0 ? `استعد... ${pre}` : 'دوس دوس دوس!! 🔥';
+        if(pre<=0){
+          clearInterval(preIv); running=true;
+          iv = setInterval(()=>{
+            timeLeft--; document.getElementById('tbTime').textContent=timeLeft;
+            if(timeLeft<=0){
+              running=false; clearInterval(iv); startBtn.disabled=false; hint.textContent='خلصت الجولة!';
+              api.setScore(`${countL} - ${countR}`);
+              if(countL===countR) api.showResult('draw','تعادل! 🤝', `${countL} - ${countR}`);
+              else api.showResult('win', `فاز ${countL>countR?'🔵 اللاعب الشمال':'🟣 اللاعب اليمين'}!`, `${countL} - ${countR} نقرة`);
+            }
+          },1000);
+        }
+      },1000);
+    });
+    api.setScore('اختار المستوى');
+    return ()=>{ clearInterval(iv); };
+  }
+});
+
+// ===================== 16. ثنائي رد الفعل =====================
+GAMES.push({
+  id:'reactionduel', name:'دويتو رد الفعل', icon:'🚦', color:'linear-gradient(135deg,#ffcd3c,#2be6d8)', category:'two',
+  how:'اختار عدد الجولات المطلوب.\nدوس ابدأ، وكل لاعب يحط صباعه على نصه ويستنى.\nلما النص يتحول للون الأخضر، أسرع واحد يدوس ياخد النقطة. لو دوست قبل الأخضر تخسر الجولة على طول.',
+  init(container, api){
+    let state='idle', timeoutId=null, scores={L:0,R:0}, WIN_TARGET=3;
+
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار مستوى الجولة</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    const gameArea = el('div','hidden'); gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px'; gameArea.style.display='flex'; gameArea.style.width='100%';
+    container.appendChild(gameArea);
+    [{label:'⚡ أول 3',v:3},{label:'⭐ أول 5',v:5},{label:'🔥 أول 7',v:7}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ WIN_TARGET=o.v; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); });
+      menuBtns.appendChild(b);
+    });
+
+    const status = el('div','info-pill','دوس ابدأ عشان تبدأ الجولة');
+    gameArea.appendChild(status);
+    const scoreP = el('div','info-pill', `🔵 <b id="rdL">0</b> &nbsp;-&nbsp; 🟣 <b id="rdR">0</b>`);
+    gameArea.appendChild(scoreP);
+
+    const splitWrap = el('div','split'); splitWrap.style.height='260px'; splitWrap.style.width='100%';
+    gameArea.appendChild(splitWrap);
+    const left = el('div',''); left.style.background='#ff5d5d'; left.innerHTML = `<div style="font-size:30px">⏳</div><div>اللاعب الشمال</div>`;
+    const right = el('div',''); right.style.background='#ff5d5d'; right.innerHTML = `<div style="font-size:30px">⏳</div><div>اللاعب اليمين</div>`;
+    splitWrap.appendChild(left); splitWrap.appendChild(right);
+
+    const startBtn = el('button','btn btn-primary','ابدأ الجولة');
+    gameArea.appendChild(startBtn);
+
+    function setIdleColors(){ left.style.background='#3a3470'; right.style.background='#3a3470'; }
+    function press(side){
+      if(state==='waiting'){
+        clearTimeout(timeoutId);
+        state='idle';
+        status.textContent = `${side==='L'?'اللاعب الشمال':'اللاعب اليمين'} دوس بدري! خسر الجولة 😅`;
+        const winner = side==='L' ? 'R' : 'L';
+        scores[winner]++;
+        updateScores();
+        startBtn.disabled=false; setIdleColors();
+        return;
+      }
+      if(state==='go'){
+        state='idle';
+        status.textContent = `${side==='L'?'🔵 اللاعب الشمال':'🟣 اللاعب اليمين'} كان أسرع! 🎉`;
+        scores[side]++; updateScores();
+        startBtn.disabled=false; setIdleColors();
+      }
+    }
+    left.addEventListener('pointerdown', ()=>press('L'));
+    right.addEventListener('pointerdown', ()=>press('R'));
+
+    function updateScores(){
+      document.getElementById('rdL').textContent=scores.L;
+      document.getElementById('rdR').textContent=scores.R;
+      api.setScore(`🔵 ${scores.L} - 🟣 ${scores.R}`);
+      if(scores.L>=WIN_TARGET || scores.R>=WIN_TARGET){
+        api.showResult('win', `فاز ${scores.L>=WIN_TARGET?'🔵 اللاعب الشمال':'🟣 اللاعب اليمين'}!`, `النتيجة ${scores.L} - ${scores.R}`);
+        scores={L:0,R:0}; updateScores();
+      }
+    }
+    startBtn.addEventListener('click', ()=>{
+      startBtn.disabled=true; setIdleColors();
+      status.textContent='استنوا اللون الأخضر...';
+      state='waiting';
+      timeoutId = setTimeout(()=>{
+        state='go'; left.style.background='#3fe08a'; right.style.background='#3fe08a';
+        status.textContent='دوسوا دلوقتي!!';
+      }, rand(1500,4000));
+    });
+    updateScores();
+    return ()=> clearTimeout(timeoutId);
+  }
+});
+
+// ===================== 17. أسئلة قدام بعض (Trivia Duel) =====================
+GAMES.push({
+  id:'trivia', name:'أسئلة قدام بعض', icon:'❓', color:'linear-gradient(135deg,#ff5d8f,#ffcd3c)', category:'two',
+  how:'اختار مستوى صعوبة الأسئلة.\nهيظهر سؤال، واللاعبين بياخدوا دور بالتبادل يجاوبوا على أسئلة مختلفة.\nكل إجابة صحيحة بتاخد نقطة. اللي يجمع نقط أكتر بعد كل الأسئلة يكسب.',
+  init(container, api){
+    const BANKS = {
+      easy: [
+        {q:'كام قارة في العالم؟', opts:['5','6','7','8'], c:2},
+        {q:'كام يوم في الأسبوع؟', opts:['5','6','7','8'], c:2},
+        {q:'الشمس بتشرق من فين؟', opts:['الشرق','الغرب','الشمال','الجنوب'], c:0},
+        {q:'كام رجل عند الإنسان؟', opts:['1','2','3','4'], c:1},
+        {q:'ألوان قوس قزح كام لون؟', opts:['5','6','7','9'], c:2},
+        {q:'أكبر محيط في العالم اسمه ايه؟', opts:['الأطلسي','الهادي','الهندي','المتجمد'], c:1},
+        {q:'الماء بيتجمد عند كام درجة مئوية؟', opts:['0','10','-5','5'], c:0},
+        {q:'كام شهر في السنة؟', opts:['10','11','12','13'], c:2},
+        {q:'عاصمة مصر ايه؟', opts:['الإسكندرية','القاهرة','الأقصر','أسوان'], c:1},
+        {q:'أسرع حيوان بري في العالم؟', opts:['الأسد','الحصان','الفهد','النمر'], c:2},
+        {q:'كام لون أساسي في الطيف؟', opts:['2','3','4','5'], c:1},
+        {q:'الكوكب اللي بنعيش فيه اسمه ايه؟', opts:['المريخ','الأرض','الزهرة','زحل'], c:1}
+      ],
+      medium: [
+        {q:'أكبر قارة في العالم من حيث المساحة؟', opts:['أفريقيا','آسيا','أمريكا الشمالية','أوروبا'], c:1},
+        {q:'مين اخترع المصباح الكهربائي؟', opts:['نيوتن','أديسون','أينشتاين','تسلا'], c:1},
+        {q:'أطول نهر في العالم؟', opts:['الأمازون','النيل','الفرات','الدانوب'], c:1},
+        {q:'أقرب كوكب للشمس؟', opts:['الزهرة','الأرض','عطارد','المريخ'], c:2},
+        {q:'مين رسم لوحة الموناليزا؟', opts:['بيكاسو','ليوناردو دافينشي','فان جوخ','مايكل أنجلو'], c:1},
+        {q:'كام ضلع للمسدس (شكل هندسي)؟', opts:['5','6','7','8'], c:1},
+        {q:'أكبر دولة من حيث المساحة؟', opts:['الصين','كندا','روسيا','أمريكا'], c:2},
+        {q:'العملة الرسمية لليابان؟', opts:['الين','الوون','اليوان','الدولار'], c:0},
+        {q:'كام قلب عند الأخطبوط؟', opts:['1','2','3','4'], c:2},
+        {q:'أعلى جبل في العالم؟', opts:['إفرست','كليمنجارو','الألب','فوجي'], c:0},
+        {q:'مين مخترع الهاتف؟', opts:['أديسون','جراهام بيل','نيوتن','تسلا'], c:1},
+        {q:'أصغر كوكب في المجموعة الشمسية؟', opts:['المريخ','عطارد','الزهرة','بلوتو'], c:1}
+      ],
+      hard: [
+        {q:'في أي سنة بدأت الحرب العالمية الثانية؟', opts:['1935','1939','1941','1945'], c:1},
+        {q:'مين مؤلف رواية الحرب والسلام؟', opts:['تولستوي','ديستوفيسكي','تشيخوف','هيمنجواي'], c:0},
+        {q:'عاصمة أستراليا؟', opts:['سيدني','ملبورن','كانبيرا','بيرث'], c:2},
+        {q:'كام عدد الكروموسومات في خلية الإنسان؟', opts:['42','44','46','48'], c:2},
+        {q:'اسم أول قمر صناعي اتطلق للفضاء؟', opts:['أبولو 11','سبوتنيك 1','هابل','فوييجر'], c:1},
+        {q:'صحراء جوبي موجودة في أي قارة؟', opts:['أفريقيا','آسيا','أمريكا الجنوبية','أستراليا'], c:1},
+        {q:'مين اللي اكتشف قانون الجاذبية؟', opts:['أينشتاين','جاليليو','نيوتن','كوبرنيكوس'], c:2},
+        {q:'الرمز الكيميائي Au بيرمز لعنصر ايه؟', opts:['الفضة','الألومنيوم','الذهب','الحديد'], c:2},
+        {q:'كام عدد أسنان الإنسان البالغ؟', opts:['28','30','32','34'], c:2},
+        {q:'أعمق نقطة في محيطات الأرض؟', opts:['خندق ماريانا','بحر اليابان','خليج المكسيك','بحر البلطيق'], c:0},
+        {q:'مين مؤسس شركة مايكروسوفت؟', opts:['ستيف جوبز','بيل جيتس','إيلون ماسك','جيف بيزوس'], c:1},
+        {q:'أول من صعد سطح القمر؟', opts:['يوري جاجارين','نيل أرمسترونج','باز ألدرين','جون جلين'], c:1}
+      ]
+    };
+
+    let level='easy', qIndex=0, turn=1, scores={p1:0,p2:0}, questions=[], totalRounds=8;
+
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار مستوى الأسئلة</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    [{label:'🟢 سهل',v:'easy'},{label:'🟡 متوسط',v:'medium'},{label:'🔴 صعب',v:'hard'}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ level=o.v; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); startGame(); });
+      menuBtns.appendChild(b);
+    });
+
+    const gameArea = el('div','hidden'); gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px'; gameArea.style.display='flex'; gameArea.style.width='100%';
+    container.appendChild(gameArea);
+
+    const scoreP = el('div','info-pill', `🔵 اللاعب 1: <b id="trP1">0</b> &nbsp;-&nbsp; 🟣 اللاعب 2: <b id="trP2">0</b>`);
+    gameArea.appendChild(scoreP);
+    const turnBadge = el('div','info-pill','');
+    gameArea.appendChild(turnBadge);
+    const qBox = el('div','display'); qBox.style.fontSize='18px'; qBox.style.fontWeight='800'; qBox.style.textAlign='center'; qBox.style.minHeight='50px'; qBox.style.maxWidth='320px';
+    gameArea.appendChild(qBox);
+    const optsWrap = el('div','grid-box'); optsWrap.style.gridTemplateColumns='repeat(2, 150px)'; optsWrap.style.gridTemplateRows='repeat(2, auto)';
+    gameArea.appendChild(optsWrap);
+
+    function startGame(){
+      questions = shuffle([...BANKS[level]]).slice(0, totalRounds);
+      qIndex=0; turn=1; scores={p1:0,p2:0};
+      document.getElementById('trP1').textContent=0; document.getElementById('trP2').textContent=0;
+      api.setScore(`🔵 0 - 🟣 0`);
+      nextQuestion();
+    }
+    function nextQuestion(){
+      if(qIndex >= questions.length){
+        if(scores.p1===scores.p2) api.showResult('draw','تعادل! 🤝', `${scores.p1} - ${scores.p2}`);
+        else api.showResult('win', `${scores.p1>scores.p2?'🔵 اللاعب 1':'🟣 اللاعب 2'} بطل الأسئلة! 🎉`, `النتيجة النهائية ${scores.p1} - ${scores.p2}`);
+        return;
+      }
+      turnBadge.textContent = `دور ${turn===1?'🔵 اللاعب 1':'🟣 اللاعب 2'} — سؤال ${qIndex+1} من ${questions.length}`;
+      const item = questions[qIndex];
+      qBox.textContent = item.q;
+      optsWrap.innerHTML='';
+      shuffle(item.opts.map((o,i)=>({o,correct:i===item.c}))).forEach(opt=>{
+        const b = el('button','tile-btn', opt.o); b.style.height='54px'; b.style.fontSize='14px'; b.style.padding='4px 6px';
+        b.addEventListener('click', ()=>{
+          Array.from(optsWrap.children).forEach(x=>x.disabled=true);
+          if(opt.correct){
+            b.style.background='#3fe08a';
+            scores[turn===1?'p1':'p2']++;
+          } else {
+            b.style.background='#ff5d5d';
+            Array.from(optsWrap.children).forEach(x=>{ if(x.textContent===item.opts[item.c]) x.style.background='#3fe08a'; });
+          }
+          document.getElementById('trP1').textContent=scores.p1;
+          document.getElementById('trP2').textContent=scores.p2;
+          api.setScore(`🔵 ${scores.p1} - 🟣 ${scores.p2}`);
+          qIndex++; turn = turn===1?2:1;
+          setTimeout(nextQuestion, 1100);
+        });
+        optsWrap.appendChild(b);
+      });
+    }
+    api.setScore('اختار المستوى');
+    return ()=>{};
+  }
+});
+
+// ===================== 18. الداما (ثنائي) =====================
+GAMES.push({
+  id:'checkers', name:'الداما', icon:'⚫', color:'linear-gradient(135deg,#2be6d8,#ff5d8f)', category:'two',
+  how:'كل لاعب عنده 12 قطعة (🔵 و🟣).\nدوس على قطعتك عشان تشوف الأماكن اللي تقدر تتحرك لها، وبعدين دوس على المكان.\nلو قدرت تقفز فوق قطعة الخصم لمكان فاضي تاخدها منه. لو قطعتك وصلت لآخر اللوحة بتبقى ملكة وتتحرك في كل الاتجاهات.',
+  init(container, api){
+    const N=8;
+    let board, turn, selected=null, legalTargets=[];
+
+    const status = el('div','info-pill','دور: 🔵 اللاعب 1');
+    container.appendChild(status);
+    const gridEl = el('div','grid-box'); gridEl.style.gridTemplateColumns=`repeat(${N},32px)`; gridEl.style.gridTemplateRows=`repeat(${N},32px)`;
+    gridEl.style.direction='ltr';
+    container.appendChild(gridEl);
+    const hint = el('div','info-pill','دوس على قطعتك وبعدين على المكان اللي تحب تنقلها له');
+    container.appendChild(hint);
+
+    const cellsEls = [];
+    function build(){
+      board = Array.from({length:N},()=>Array(N).fill(null));
+      for(let r=0;r<3;r++) for(let c=0;c<N;c++) if((r+c)%2===1) board[r][c]='A';
+      for(let r=N-3;r<N;r++) for(let c=0;c<N;c++) if((r+c)%2===1) board[r][c]='B';
+      turn='A'; selected=null; legalTargets=[];
+      gridEl.innerHTML=''; cellsEls.length=0;
+      for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+        const cell = el('button','tile-btn',''); cell.style.borderRadius='4px'; cell.style.fontSize='16px';
+        cell.style.background = (r+c)%2===1 ? '#241d54' : '#1b1640';
+        cell.addEventListener('click', ()=>onCellClick(r,c));
+        gridEl.appendChild(cell); cellsEls.push(cell);
+      }
+      render();
+      api.setScore('دور: 🔵 اللاعب 1');
+    }
+    function dirs(piece){
+      if(piece==='AK'||piece==='BK') return [[1,1],[1,-1],[-1,1],[-1,-1]];
+      if(piece==='A') return [[1,1],[1,-1]];
+      return [[-1,1],[-1,-1]];
+    }
+    function owner(piece){ return piece && (piece[0]); }
+    function inB(r,c){ return r>=0&&r<N&&c>=0&&c<N; }
+    function capturesFor(player){
+      const moves=[];
+      for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+        const p = board[r][c]; if(!p || owner(p)!==player) continue;
+        for(const [dr,dc] of dirs(p)){
+          const mr=r+dr, mc=c+dc, jr=r+dr*2, jc=c+dc*2;
+          if(inB(jr,jc) && board[mr] && board[mr][mc] && owner(board[mr][mc])!==player && !board[jr][jc]){
+            moves.push({from:[r,c], to:[jr,jc], cap:[mr,mc]});
+          }
+        }
+      }
+      return moves;
+    }
+    function normalsFor(player){
+      const moves=[];
+      for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+        const p = board[r][c]; if(!p || owner(p)!==player) continue;
+        for(const [dr,dc] of dirs(p)){
+          const mr=r+dr, mc=c+dc;
+          if(inB(mr,mc) && !board[mr][mc]) moves.push({from:[r,c], to:[mr,mc]});
+        }
+      }
+      return moves;
+    }
+    function legalMovesFor(player){
+      const caps = capturesFor(player);
+      return caps.length ? caps : normalsFor(player);
+    }
+    function render(){
+      board.forEach((row,r)=>row.forEach((p,c)=>{
+        const cell = cellsEls[r*N+c];
+        cell.textContent = p ? (p==='A'?'🔵':p==='B'?'🟣':p==='AK'?'👑':'♛') : '';
+        if(p==='AK') cell.textContent='🔵👑'; if(p==='BK') cell.textContent='🟣👑';
+        cell.style.outline = (selected && selected[0]===r && selected[1]===c) ? '3px solid #ffcd3c' : 'none';
+        cell.style.boxShadow = legalTargets.some(t=>t[0]===r&&t[1]===c) ? 'inset 0 0 0 3px #3fe08a' : 'none';
+      }));
+    }
+    function onCellClick(r,c){
+      const all = legalMovesFor(turn);
+      const forced = capturesFor(turn).length>0;
+      if(selected){
+        const mv = all.find(m=>m.from[0]===selected[0]&&m.from[1]===selected[1]&&m.to[0]===r&&m.to[1]===c);
+        if(mv){ doMove(mv); return; }
+      }
+      const p = board[r][c];
+      if(p && owner(p)===turn){
+        const myMoves = all.filter(m=>m.from[0]===r&&m.from[1]===c);
+        if(myMoves.length){ selected=[r,c]; legalTargets = myMoves.map(m=>m.to); render(); return; }
+      }
+      selected=null; legalTargets=[]; render();
+    }
+    function doMove(mv){
+      const [fr,fc]=mv.from, [tr,tc]=mv.to;
+      let piece = board[fr][fc];
+      board[fr][fc]=null;
+      if(mv.cap) board[mv.cap[0]][mv.cap[1]]=null;
+      if(piece==='A' && tr===N-1) piece='AK';
+      if(piece==='B' && tr===0) piece='BK';
+      board[tr][tc]=piece;
+      selected=null; legalTargets=[];
+      if(mv.cap){
+        const further = capturesFor(turn).filter(m=>m.from[0]===tr&&m.from[1]===tc);
+        if(further.length){ selected=[tr,tc]; legalTargets = further.map(m=>m.to); render(); return; }
+      }
+      const oppCount = board.flat().filter(p=>p && owner(p) !== turn).length;
+      turn = turn==='A'?'B':'A';
+      const oppLegal = legalMovesFor(turn);
+      render();
+      const remainingOpp = board.flat().filter(p=>p && owner(p)===turn).length;
+      if(remainingOpp===0 || oppLegal.length===0){
+        api.showResult('win', `فاز ${turn==='A'?'🟣 اللاعب 2':'🔵 اللاعب 1'}!`, 'الخصم مالوش حركات متاحة');
+        return;
+      }
+      status.textContent = `دور: ${turn==='A'?'🔵 اللاعب 1':'🟣 اللاعب 2'}`;
+      api.setScore(`دور: ${turn==='A'?'🔵 اللاعب 1':'🟣 اللاعب 2'}`);
+    }
+    build();
+    return ()=>{};
+  }
+});
+
+// ===================== 19. حرب السفن (ثنائي) =====================
+GAMES.push({
+  id:'battleship', name:'حرب السفن', icon:'🚢', color:'linear-gradient(135deg,#2be6d8,#8b7bff)', category:'two',
+  how:'اختار حجم البحر. كل لاعب عنده سفن مخبأة بشكل عشوائي.\nبالتبادل، كل لاعب يدوس على مكان في بحر الخصم عشان يضرب فيه.\nلو ضربت سفينة هتاخد إشارة 💥، ولو غلط هتاخد 〜. غرّق كل سفن الخصم عشان تكسب.',
+  init(container, api){
+    const LEVELS = {
+      small:{N:6, ships:[3,2,2]},
+      normal:{N:8, ships:[4,3,2,2]},
+      big:{N:10, ships:[5,4,3,2,2]}
+    };
+    let N, shipSizes, boards, current='A', over=false;
+
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار حجم البحر</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    const gameArea = el('div','hidden'); gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px'; gameArea.style.display='flex'; gameArea.style.width='100%';
+    container.appendChild(gameArea);
+    [{label:'🟢 صغير 6×6',v:'small'},{label:'🟡 عادي 8×8',v:'normal'},{label:'🔴 كبير 10×10',v:'big'}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ const lv=LEVELS[o.v]; N=lv.N; shipSizes=lv.ships; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); setupGame(); });
+      menuBtns.appendChild(b);
+    });
+
+    const passScreen = el('div','pill-row'); passScreen.style.flexDirection='column'; passScreen.style.alignItems='center'; passScreen.style.gap='10px';
+    gameArea.appendChild(passScreen);
+    const passMsg = el('div','info-pill','');
+    const passBtn = el('button','btn btn-primary','جاهز! ');
+    passScreen.appendChild(passMsg); passScreen.appendChild(passBtn);
+
+    const playScreen = el('div','hidden'); playScreen.style.flexDirection='column'; playScreen.style.alignItems='center'; playScreen.style.gap='8px'; playScreen.style.display='flex';
+    gameArea.appendChild(playScreen);
+    const statusP = el('div','info-pill','');
+    playScreen.appendChild(statusP);
+    const shipsLeftP = el('div','info-pill','');
+    playScreen.appendChild(shipsLeftP);
+    const gridEl = el('div','grid-box'); gridEl.style.direction='ltr';
+    playScreen.appendChild(gridEl);
+
+    function emptyBoard(){ return Array.from({length:N},()=>Array(N).fill(null)); }
+    function placeShips(){
+      const b = emptyBoard();
+      let id=0;
+      for(const size of shipSizes){
+        let placed=false, tries=0;
+        while(!placed && tries<200){
+          tries++;
+          const horiz = Math.random()<0.5;
+          const r = rand(0, N-1), c = rand(0, N-1);
+          const cells = [];
+          let ok=true;
+          for(let i=0;i<size;i++){
+            const rr = horiz?r:r+i, cc = horiz?c+i:c;
+            if(!inB(rr,cc) || b[rr][cc]){ ok=false; break; }
+            cells.push([rr,cc]);
+          }
+          if(ok){ cells.forEach(([rr,cc])=>b[rr][cc]='S'+id); placed=true; id++; }
+        }
+      }
+      return b;
+    }
+    function inB(r,c){ return r>=0&&r<N&&c>=0&&c<N; }
+    function setupGame(){
+      boards = { A: placeShips(), B: placeShips() };
+      current='A'; over=false;
+      showPassScreen();
+    }
+    function countShipsLeft(target){
+      const b = boards[target];
+      const remaining = new Set();
+      for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+        if(b[r][c] && b[r][c] !== 'X' && b[r][c] !== 'M') remaining.add(b[r][c]);
+      }
+      return remaining.size;
+    }
+    function showPassScreen(){
+      playScreen.classList.add('hidden');
+      passMsg.textContent = `مرر التابلت للاعب ${current==='A'?'1 🔵':'2 🟣'} — دوسوا جاهز لما تكونوا مستعدين`;
+      passBtn.textContent = `اللاعب ${current==='A'?'1':'2'} جاهز`;
+      passScreen.classList.remove('hidden');
+    }
+    passBtn.addEventListener('click', ()=>{
+      passScreen.classList.add('hidden');
+      playScreen.classList.remove('hidden');
+      buildGrid();
+    });
+    function buildGrid(){
+      const target = current==='A' ? 'B' : 'A'; // attacking opponent's board
+      const CELL = N<=6?38:N<=8?30:24;
+      gridEl.style.gridTemplateColumns = `repeat(${N},${CELL}px)`;
+      gridEl.style.gridTemplateRows = `repeat(${N},${CELL}px)`;
+      gridEl.innerHTML='';
+      statusP.textContent = `دور اللاعب ${current==='A'?'1 🔵':'2 🟣'} — دوس عشان تضرب بحر الخصم`;
+      shipsLeftP.textContent = `سفن الخصم المتبقية: ${countShipsLeft(target)}`;
+      const b = boards[target];
+      for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+        const cell = el('button','tile-btn',''); cell.style.fontSize = N>8?'11px':'14px';
+        const val = b[r][c];
+        if(val==='X'){ cell.textContent='💥'; cell.style.background='#ff5d5d'; cell.disabled=true; }
+        else if(val==='M'){ cell.textContent='〜'; cell.style.background='#241d54'; cell.disabled=true; }
+        else { cell.style.background='#1b1640'; cell.addEventListener('click', ()=>fire(target,r,c)); }
+        gridEl.appendChild(cell);
+      }
+    }
+    function fire(target, r, c){
+      if(over) return;
+      const b = boards[target];
+      const val = b[r][c];
+      if(typeof val === 'string' && val.startsWith('S')){
+        b[r][c] = 'X';
+        if(countShipsLeft(target) === 0){
+          over = true;
+          api.showResult('win', `فاز اللاعب ${current==='A'?'1 🔵':'2 🟣'}!`, 'غرق كل سفن الخصم! 🎉');
+          return;
+        }
+      } else {
+        b[r][c] = 'M';
+      }
+      current = current==='A' ? 'B' : 'A';
+      api.setScore(`دور اللاعب ${current==='A'?'1':'2'}`);
+      showPassScreen();
+    }
+    api.setScore('اختار المستوى');
+    return ()=>{};
+  }
+});
+
+// ===================== 20. برج الحكماء (فردي) =====================
+GAMES.push({
+  id:'hanoi', name:'برج الحكماء', icon:'🗼', color:'linear-gradient(135deg,#ffcd3c,#8b7bff)', category:'single',
+  how:'اختار عدد الأقراص.\nدوس على أي عمود عشان تختار أعلى قرص فيه، وبعدين دوس على العمود اللي عايز تنقله له.\nمينفعش تحط قرص كبير فوق قرص أصغر منه. انقل كل الأقراص للعمود الأخير بأقل عدد حركات.',
+  init(container, api){
+    let n=4, pegs, moves=0, selected=null, minMoves;
+
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار عدد الأقراص (الصعوبة)</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    const gameArea = el('div','hidden'); gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='10px'; gameArea.style.display='flex'; gameArea.style.width='100%';
+    container.appendChild(gameArea);
+    [{label:'🟢 سهل (3 أقراص)',v:3},{label:'🟡 عادي (4 أقراص)',v:4},{label:'🔴 صعب (5 أقراص)',v:5},{label:'🔥 خبير (6 أقراص)',v:6}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ n=o.v; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); reset(); });
+      menuBtns.appendChild(b);
+    });
+
+    const info = el('div','pill-row');
+    info.innerHTML = `<div class="info-pill">🔁 حركات: <b id="hnMoves">0</b></div><div class="info-pill">🎯 أقل حركات ممكنة: <b id="hnMin">-</b></div>`;
+    gameArea.appendChild(info);
+    const hint = el('div','info-pill','دوس على أي عمود لتختار أعلى قرص، وبعدين دوس على العمود اللي تحب تنقله له');
+    gameArea.appendChild(hint);
+    const pegsWrap = el('div'); pegsWrap.style.display='flex'; pegsWrap.style.gap='14px'; pegsWrap.style.alignItems='flex-end'; pegsWrap.style.height='170px';
+    gameArea.appendChild(pegsWrap);
+
+    const COLORS = ['#ff5d8f','#ffcd3c','#3fe08a','#2be6d8','#8b7bff','#ff8a3d'];
+    const pegEls = [];
+    function buildPegs(){
+      pegsWrap.innerHTML=''; pegEls.length=0;
+      for(let i=0;i<3;i++){
+        const peg = el('div'); peg.style.width='100px'; peg.style.height='160px'; peg.style.background='#1b1640';
+        peg.style.borderRadius='10px'; peg.style.display='flex'; peg.style.flexDirection='column-reverse';
+        peg.style.alignItems='center'; peg.style.justifyContent='flex-start'; peg.style.padding='4px'; peg.style.gap='3px';
+        peg.style.cursor='pointer'; peg.style.border='2px solid transparent';
+        peg.addEventListener('click', ()=>onPegClick(i));
+        pegsWrap.appendChild(peg); pegEls.push(peg);
+      }
+    }
+    function render(){
+      pegEls.forEach((peg,i)=>{
+        peg.innerHTML='';
+        peg.style.borderColor = selected===i ? '#ffcd3c' : 'transparent';
+        pegs[i].forEach(size=>{
+          const disk = el('div', '', String(size));
+          disk.style.width = (24 + size*11)+'px'; disk.style.height='16px'; disk.style.borderRadius='8px';
+          disk.style.background = COLORS[(size-1)%COLORS.length]; disk.style.color='#0c0a1e'; disk.style.fontWeight='800';
+          disk.style.fontSize='11px'; disk.style.display='flex'; disk.style.alignItems='center'; disk.style.justifyContent='center';
+          peg.appendChild(disk);
+        });
+      });
+      document.getElementById('hnMoves').textContent = moves;
+    }
+    function onPegClick(i){
+      if(selected===null){
+        if(pegs[i].length) selected=i;
+        render(); return;
+      }
+      if(selected===i){ selected=null; render(); return; }
+      const from=selected, to=i;
+      const moving = pegs[from][pegs[from].length-1];
+      const destTop = pegs[to][pegs[to].length-1];
+      if(destTop===undefined || moving<destTop){
+        pegs[to].push(pegs[from].pop());
+        moves++;
+        selected=null; render();
+        if(pegs[2].length===n){
+          api.updateBest(-moves);
+          const perfect = moves===minMoves;
+          api.showResult('win', perfect? 'مثالي! 🏆':'وصلت! 🎉', `عدد حركاتك: ${moves} (أقل عدد ممكن: ${minMoves})`);
+        }
+      } else {
+        selected=i; render();
+      }
+    }
+    function reset(){
+      pegs = [Array.from({length:n},(_,idx)=>n-idx), [], []];
+      moves=0; selected=null; minMoves = Math.pow(2,n)-1;
+      buildPegs(); render();
+      document.getElementById('hnMin').textContent = minMoves;
+      api.setScore(`حركات: 0`);
+    }
+    api.setScore('اختار المستوى');
+    return ()=>{};
+  }
+});
+
+// ===================== 21. تصويب كرة السلة (فردي) =====================
+GAMES.push({
+  id:'basketball', name:'تصويب السلة', icon:'🏀', color:'linear-gradient(135deg,#ff8a3d,#ffcd3c)', category:'single',
+  how:'اختار مدى بُعد الرمية.\nهتلاقي مؤشر بيتحرك يمين وشمال على شريط.\nدوس على زرار صوّب لما المؤشر يكون في المنطقة الخضرا عشان تسجل. عندك 5 رميات، سجل أكبر عدد ممكن.',
+  init(container, api){
+    const LEVELS = { easy:{zone:34, speed:1.6}, medium:{zone:22, speed:2.3}, hard:{zone:13, speed:3.1} };
+    let zoneWidth, speed, pos=0, dir=1, raf=null, shotsLeft=5, made=0, zoneStart, running=false;
+
+    const menu = el('div','pill-row');
+    menu.innerHTML = '<div class="info-pill">اختار مستوى التصويب</div>';
+    container.appendChild(menu);
+    const menuBtns = el('div','pill-row'); menu.appendChild(menuBtns);
+    const gameArea = el('div','hidden'); gameArea.style.flexDirection='column'; gameArea.style.alignItems='center'; gameArea.style.gap='12px'; gameArea.style.display='flex'; gameArea.style.width='100%';
+    container.appendChild(gameArea);
+    [{label:'🟢 قريب',v:'easy'},{label:'🟡 متوسط',v:'medium'},{label:'🔴 بعيد',v:'hard'}].forEach(o=>{
+      const b = el('button','btn btn-secondary', o.label); b.style.flex='0 0 auto';
+      b.addEventListener('click', ()=>{ const lv=LEVELS[o.v]; zoneWidth=lv.zone; speed=lv.speed; menu.classList.add('hidden'); gameArea.classList.remove('hidden'); reset(); });
+      menuBtns.appendChild(b);
+    });
+
+    const info = el('div','pill-row');
+    info.innerHTML = `<div class="info-pill">🏀 رميات متبقية: <b id="bbShots">5</b></div><div class="info-pill">🎯 هدف: <b id="bbMade">0</b></div>`;
+    gameArea.appendChild(info);
+    const hint = el('div','info-pill','دوس لما المؤشر يبقى في المنطقة الخضرا');
+    gameArea.appendChild(hint);
+
+    const barWrap = el('div'); barWrap.style.position='relative'; barWrap.style.width='280px'; barWrap.style.height='36px';
+    barWrap.style.background='#241d54'; barWrap.style.borderRadius='18px'; barWrap.style.overflow='hidden';
+    gameArea.appendChild(barWrap);
+    const zoneEl = el('div'); zoneEl.style.position='absolute'; zoneEl.style.top='0'; zoneEl.style.height='100%'; zoneEl.style.background='rgba(63,224,138,.45)';
+    barWrap.appendChild(zoneEl);
+    const marker = el('div'); marker.style.position='absolute'; marker.style.top='2px'; marker.style.width='6px'; marker.style.height='32px'; marker.style.background='#ffcd3c'; marker.style.borderRadius='3px';
+    barWrap.appendChild(marker);
+
+    const shootBtn = el('button','btn btn-primary','🏀 صوّب!');
+    gameArea.appendChild(shootBtn);
+
+    function placeZone(){
+      zoneStart = rand(5, 95-zoneWidth);
+      zoneEl.style.left = zoneStart+'%'; zoneEl.style.width = zoneWidth+'%';
+    }
+    function loop(){
+      pos += dir*speed;
+      if(pos>=100){ pos=100; dir=-1; }
+      if(pos<=0){ pos=0; dir=1; }
+      marker.style.left = `calc(${pos}% - 3px)`;
+      raf = requestAnimationFrame(loop);
+    }
+    function shoot(){
+      if(!running || shotsLeft<=0) return;
+      const hit = pos >= zoneStart && pos <= zoneStart+zoneWidth;
+      if(hit){ made++; hint.textContent='🔥 نااايس! سلة!'; } else { hint.textContent='😅 معدية، جرب تاني'; }
+      document.getElementById('bbMade').textContent = made;
+      shotsLeft--;
+      document.getElementById('bbShots').textContent = shotsLeft;
+      api.setScore(`🎯 ${made}/5`);
+      if(shotsLeft<=0){
+        running=false; cancelAnimationFrame(raf);
+        api.updateBest(made);
+        api.showResult(made>=3?'win':'draw', made>=3?'شوطر! 🏆':'خلصت الرميات', `سجلت ${made} من 5 تصويبات`);
+        return;
+      }
+      placeZone();
+    }
+    shootBtn.addEventListener('click', shoot);
+    function reset(){
+      shotsLeft=5; made=0; pos=0; dir=1; running=true;
+      document.getElementById('bbShots').textContent=5; document.getElementById('bbMade').textContent=0;
+      placeZone(); cancelAnimationFrame(raf); loop();
+      api.setScore('🎯 0/5');
+    }
+    api.setScore('اختار المستوى');
+    return ()=>{ running=false; cancelAnimationFrame(raf); };
+  }
+});
+
+</script>
+<script>
+// ===================== HUB CONTROLLER =====================
+const gameGrid = document.getElementById('gameGrid');
+const gameScreen = document.getElementById('gameScreen');
+const gameContainer = document.getElementById('gameContainer');
+const gameTitleEl = document.getElementById('gameTitle');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const backBtn = document.getElementById('backBtn');
+const resultOverlay = document.getElementById('resultOverlay');
+const resultEmoji = document.getElementById('resultEmoji');
+const resultTitle = document.getElementById('resultTitle');
+const resultMsg = document.getElementById('resultMsg');
+const resultMenuBtn = document.getElementById('resultMenuBtn');
+const resultReplayBtn = document.getElementById('resultReplayBtn');
+const gameCountEl = document.getElementById('gameCount');
+const howBtn = document.getElementById('howBtn');
+const howOverlay = document.getElementById('howOverlay');
+const howTitle = document.getElementById('howTitle');
+const howText = document.getElementById('howText');
+const howCloseBtn = document.getElementById('howCloseBtn');
+
+const bestScores = {}; // in-memory only, per session
+let currentGame = null;
+let currentCleanup = null;
+let currentCategory = 'all';
+
+const CAT_LABEL = { single: 'فردي', two: 'ثنائي', both: 'الاثنين' };
+const CAT_TAGCLASS = { single: 'single', two: 'two', both: 'both' };
+
+function renderGrid(){
+  gameGrid.innerHTML = '';
+  const list = GAMES.filter(g => currentCategory === 'all' ? true : (g.category === currentCategory || (currentCategory!=='both' && g.category==='both')) );
+  list.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.borderColor = 'transparent';
+    const best = bestScores[g.id];
+    card.innerHTML = `
+      ${best ? `<div class="best">🏅 ${best}</div>` : ''}
+      <div class="icon-tile" style="background:${g.color}">${g.icon}</div>
+      <h3>${g.name}</h3>
+      <span class="tag ${CAT_TAGCLASS[g.category]}">${CAT_LABEL[g.category]}</span>
+    `;
+    card.addEventListener('click', () => openGame(g));
+    gameGrid.appendChild(card);
+  });
+  gameCountEl.textContent = `${GAMES.length} لعبة متاحة`;
+}
+
+document.getElementById('tabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.tab');
+  if(!tab) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentCategory = tab.dataset.cat;
+  renderGrid();
+});
+
+function openGame(g){
+  currentGame = g;
+  gameTitleEl.textContent = g.name;
+  scoreDisplay.textContent = '';
+  gameContainer.innerHTML = '';
+  gameScreen.classList.add('open');
+
+  const api = makeAPI(g);
+  currentCleanup = g.init(gameContainer, api) || null;
+
+  if(g.how){
+    howTitle.textContent = `إزاي تلعب ${g.name}؟`;
+    howText.textContent = g.how;
+    howOverlay.classList.add('show');
+  }
+}
+
+howBtn.addEventListener('click', () => {
+  if(!currentGame || !currentGame.how) return;
+  howTitle.textContent = `إزاي تلعب ${currentGame.name}؟`;
+  howText.textContent = currentGame.how;
+  howOverlay.classList.add('show');
+});
+howCloseBtn.addEventListener('click', () => howOverlay.classList.remove('show'));
+
+function closeGame(){
+  gameScreen.classList.remove('open');
+  resultOverlay.classList.remove('show');
+  howOverlay.classList.remove('show');
+  if(typeof currentCleanup === 'function'){ try{ currentCleanup(); }catch(e){} }
+  currentCleanup = null;
+  setTimeout(() => { gameContainer.innerHTML=''; }, 250);
+  renderGrid();
+}
+
+backBtn.addEventListener('click', closeGame);
+resultMenuBtn.addEventListener('click', closeGame);
+resultReplayBtn.addEventListener('click', () => {
+  resultOverlay.classList.remove('show');
+  if(typeof currentCleanup === 'function'){ try{ currentCleanup(); }catch(e){} }
+  gameContainer.innerHTML = '';
+  const api = makeAPI(currentGame);
+  currentCleanup = currentGame.init(gameContainer, api) || null;
+});
+
+function makeAPI(g){
+  return {
+    setScore(text){ scoreDisplay.textContent = text; },
+    updateBest(value){
+      const prev = bestScores[g.id];
+      if(prev === undefined || value > prev){ bestScores[g.id] = value; }
+    },
+    getBest(){ return bestScores[g.id]; },
+    showResult(kind, title, msg){
+      // kind: 'win' | 'lose' | 'draw'
+      resultEmoji.textContent = kind === 'win' ? '🏆' : kind === 'lose' ? '💥' : '🤝';
+      resultTitle.textContent = title;
+      resultMsg.textContent = msg;
+      resultOverlay.classList.add('show');
+    }
+  };
+}
+
+renderGrid();
+
+</script>
+</body>
+</html>
