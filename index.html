@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>شاشات يوسف</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e1130; --s1:#161a44; --s2:#1f2560; --line:#343c86;
+  --tx:#edefff; --mut:#9aa2dc; --a:#7c5cff; --b:#38e1ff;
+  --r:16px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);
+  font-family:'Readex Pro',Tahoma,system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--b);outline-offset:2px}
+
+.app{display:flex;flex-direction:column;height:100dvh;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+/* ---------- الشريط العلوي ---------- */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:8px 14px;background:var(--s1);border-bottom:1px solid var(--line)}
+.logo{height:50px;min-width:50px;padding:3px;border-radius:16px;
+  background:linear-gradient(135deg,var(--a),var(--b));display:grid;place-items:center;
+  box-shadow:0 0 22px rgba(124,92,255,.45)}
+.logo img{height:44px;max-width:180px;border-radius:13px;background:var(--bg);display:block;object-fit:contain}
+.logo .word{display:none;padding:0 14px;font-weight:600;font-size:18px;letter-spacing:.5px}
+.logo.fallback{background:var(--s2);box-shadow:none;border:1px solid var(--line)}
+.logo.fallback img{display:none}
+.logo.fallback .word{display:block}
+
+.tools{display:flex;align-items:center;gap:8px}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;color:var(--mut);height:38px;padding:0 14px;border-radius:11px;cursor:pointer;
+  display:flex;align-items:center;gap:7px;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--s2);color:var(--tx);box-shadow:inset 0 0 0 1px var(--a)}
+.ib{width:44px;height:44px;border-radius:13px;border:1px solid var(--line);background:var(--bg);color:var(--tx);
+  display:grid;place-items:center;cursor:pointer;flex:none}
+.ib:active{background:var(--s2)}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- المنطقة الرئيسية ---------- */
+.stage{--split:50%;flex:1;display:flex;min-height:0;padding:10px}
+.stage[data-dir="col"]{flex-direction:column}
+.pane{container-type:inline-size;display:flex;flex-direction:column;min-width:0;min-height:0;
+  background:var(--s1);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;flex:1 1 0}
+.pane[data-i="0"]{flex:0 1 var(--split)}
+.stage[data-mode="1"] .pane[data-i="0"]{flex:1 1 0}
+.stage[data-mode="1"] .pane[data-i="1"],
+.stage[data-mode="1"] .divider{display:none}
+
+.divider{flex:none;width:14px;display:grid;place-items:center;cursor:col-resize;touch-action:none}
+.stage[data-dir="col"] .divider{width:auto;height:14px;cursor:row-resize}
+.divider::before{content:"";width:4px;height:48px;border-radius:4px;background:var(--line);transition:background .15s}
+.stage[data-dir="col"] .divider::before{width:48px;height:4px}
+.divider:hover::before,.stage.drag .divider::before{background:var(--b)}
+.stage.drag iframe{pointer-events:none}
+.stage.drag{user-select:none}
+
+/* شريط العنوان داخل كل شاشة */
+.addr{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px;background:var(--s2);border-bottom:1px solid var(--line)}
+.engine{height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 10px;font-size:14px}
+.q{flex:1 1 120px;min-width:0;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--bg);
+  padding:0 14px;font-size:15px;direction:ltr;text-align:left}
+.q::placeholder{direction:rtl;color:var(--mut)}
+.q:focus{border-color:var(--b);outline:none}
+.addr .ib{width:44px;height:44px}
+.addr .go{background:linear-gradient(135deg,var(--a),var(--b));border:0;color:#0b0e2a}
+@container (max-width:460px){ .q{flex:1 1 100%;order:-1} }
+
+.view{position:relative;flex:1;min-height:0;background:#fff}
+.view iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.load{position:absolute;top:0;right:0;left:0;height:3px;z-index:3;transform:scaleX(0);transform-origin:right;
+  background:linear-gradient(90deg,var(--a),var(--b))}
+.load.on{animation:ld 1.4s ease-out infinite}
+@keyframes ld{0%{transform:scaleX(0)}70%{transform:scaleX(.9)}100%{transform:scaleX(1);opacity:0}}
+
+.empty{position:absolute;inset:0;z-index:2;background:var(--bg);overflow:auto;padding:22px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
+.empty[hidden]{display:none}
+.empty h2{margin:0;font-size:20px;font-weight:600}
+.empty p{margin:0;color:var(--mut);font-size:14px;line-height:1.7;max-width:34ch}
+.sites{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;width:100%;max-width:520px}
+.site{border:1px solid var(--line);background:var(--s1);border-radius:14px;padding:12px;cursor:pointer;text-align:center;min-height:64px}
+.site:active{background:var(--s2)}
+.site b{display:block;font-weight:500;font-size:15px}
+.site small{display:block;margin-top:3px;color:var(--mut);direction:ltr;font-size:11.5px}
+.filebtn{border:1px dashed var(--a);background:transparent;border-radius:14px;height:46px;padding:0 18px;cursor:pointer;
+  display:flex;align-items:center;gap:8px;font-size:14px}
+
+.hint{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px;
+  background:var(--s2);border-top:1px solid var(--line);font-size:12.5px;color:var(--mut)}
+.hint[hidden]{display:none}
+.hint button{border:1px solid var(--line);background:var(--bg);border-radius:10px;height:34px;padding:0 12px;cursor:pointer;white-space:nowrap;font-size:12.5px}
+
+.toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));left:50%;transform:translate(-50%,20px);
+  background:var(--s2);border:1px solid var(--a);padding:10px 18px;border-radius:14px;font-size:14px;opacity:0;pointer-events:none;
+  transition:.25s;z-index:20;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:640px){ .seg button span{display:none} .logo img{max-width:110px} }
+@media (prefers-reduced-motion:reduce){ .load.on{animation:none;transform:scaleX(.6)} .toast{transition:none} }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="logo" id="logo">
+      <img src="youssef.gif" alt="youssef" id="logoImg">
+      <span class="word">Youssef</span>
+    </div>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="عدد الشاشات">
+        <button data-mode="1" aria-pressed="false" title="شاشة واحدة">
+          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/></svg><span>شاشة</span>
+        </button>
+        <button data-mode="2" aria-pressed="true" title="شاشتين">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M12 4v16"/></svg><span>شاشتين</span>
+        </button>
+      </div>
+      <button class="ib" id="dirBtn" title="تبديل الترتيب: جنب بعض / فوق بعض" aria-label="تبديل الترتيب">
+        <svg viewBox="0 0 24 24"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>
+      </button>
+      <button class="ib" id="fsBtn" title="ملء الشاشة" aria-label="ملء الشاشة">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage" data-mode="2" data-dir="row">
+    <div id="slot0"></div>
+    <div class="divider" id="divider" role="separator" aria-label="اسحب لتغيير حجم الشاشتين"></div>
+    <div id="slot1"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<template id="paneTpl">
+  <section class="pane">
+    <form class="addr" autocomplete="off">
+      <select class="engine" aria-label="محرك البحث">
+        <option value="wiki">ويكيبيديا</option>
+        <option value="google">جوجل ↗</option>
+        <option value="ddg">DuckDuckGo ↗</option>
+        <option value="bing">Bing ↗</option>
+      </select>
+      <input class="q" type="text" inputmode="url" enterkeyhint="go" placeholder="اكتب رابطًا أو كلمة بحث" aria-label="رابط أو بحث">
+      <button class="ib go" type="submit" title="اذهب" aria-label="اذهب"><svg viewBox="0 0 24 24"><path d="M20 12H5M5 12l6-6M5 12l6 6"/></svg></button>
+      <button class="ib reload" type="button" title="تحديث" aria-label="تحديث"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button>
+      <button class="ib newtab" type="button" title="فتح في تبويب جديد" aria-label="فتح في تبويب جديد"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></button>
+      <button class="ib home" type="button" title="مسح الشاشة" aria-label="مسح الشاشة"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </form>
+    <div class="view">
+      <div class="load"></div>
+      <iframe title="صفحة" allow="fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <div class="empty">
+        <h2>الشاشة فاضية</h2>
+        <p>اكتب رابطًا أو كلمة بحث في الشريط، أو اختر موقعًا من هنا.</p>
+        <div class="sites"></div>
+        <button type="button" class="filebtn">
+          <svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg>
+          افتح ملفًا من الجهاز
+        </button>
+        <input type="file" class="file" hidden accept="image/*,video/*,audio/*,application/pdf,.html,.htm,.txt">
+      </div>
+    </div>
+    <div class="hint" hidden>
+      <span>لو الصفحة ظهرت فاضية، فالموقع بيمنع العرض هنا.</span>
+      <button type="button" class="hintOpen">افتحه في تبويب جديد</button>
+    </div>
+  </section>
+</template>
+
+<script>
+(function(){
+  const $ = (s, r=document) => r.querySelector(s);
+  const stage = $('#stage'), divider = $('#divider'), toastEl = $('#toast');
+
+  /* ---------- اللوجو ---------- */
+  const logoImg = $('#logoImg');
+  logoImg.addEventListener('error', () => $('#logo').classList.add('fallback'));
+
+  /* ---------- أدوات ---------- */
+  let toastT;
+  function toast(msg){
+    toastEl.textContent = msg; toastEl.classList.add('on');
+    clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), 2600);
+  }
+  const store = {
+    get(){ try { return JSON.parse(localStorage.getItem('youssef-screens') || '{}'); } catch(e){ return {}; } },
+    set(o){ try { localStorage.setItem('youssef-screens', JSON.stringify(o)); } catch(e){} }
+  };
+
+  const SEARCH = {
+    wiki:   { url: q => 'https://ar.wikipedia.org/w/index.php?search=' + encodeURIComponent(q), embed: true },
+    google: { url: q => 'https://www.google.com/search?q=' + encodeURIComponent(q), embed: false },
+    ddg:    { url: q => 'https://duckduckgo.com/?q=' + encodeURIComponent(q), embed: false },
+    bing:   { url: q => 'https://www.bing.com/search?q=' + encodeURIComponent(q), embed: false }
+  };
+  const SITES = [
+    { n:'ويكيبيديا',       u:'https://ar.wikipedia.org' },
+    { n:'جيوجبرا',         u:'https://www.geogebra.org/graphing' },
+    { n:'ديزموس',          u:'https://www.desmos.com/scientific' },
+    { n:'خرائط',           u:'https://www.openstreetmap.org/export/embed.html' },
+    { n:'أرشيف الإنترنت',  u:'https://archive.org' },
+    { n:'ويكيميديا كومنز', u:'https://commons.wikimedia.org' }
+  ];
+
+  function looksLikeUrl(s){
+    if (/\s/.test(s)) return false;
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) return true;
+    return /^(localhost|[\w-]+(\.[\w-]+)+)(:\d+)?([\/?#].*)?$/i.test(s);
+  }
+  function toUrl(s){ return /^[a-z][a-z0-9+.-]*:\/\//i.test(s) ? s : 'https://' + s; }
+
+  /* ---------- الشاشات ---------- */
+  const saved = store.get();
+  const panes = [];
+
+  [0,1].forEach(i => {
+    const node = $('#paneTpl').content.firstElementChild.cloneNode(true);
+    node.dataset.i = i;
+    $('#slot' + i).replaceWith(node);
+    const p = {
+      el: node, i, url: '', isFile: false, objUrl: null,
+      form: $('.addr', node), q: $('.q', node), engine: $('.engine', node),
+      frame: $('iframe', node), empty: $('.empty', node), load: $('.load', node),
+      hint: $('.hint', node), file: $('.file', node)
+    };
+    panes.push(p);
+
+    // اختصارات المواقع
+    const box = $('.sites', node);
+    SITES.forEach(s => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'site';
+      b.innerHTML = '<b></b><small></small>';
+      $('b', b).textContent = s.n;
+      $('small', b).textContent = s.u.replace(/^https?:\/\/(www\.)?/, '').split('/')[0];
+      b.addEventListener('click', () => openUrl(p, s.u));
+      box.appendChild(b);
+    });
+
+    p.engine.value = (saved.engines && saved.engines[i]) || 'wiki';
+    p.engine.addEventListener('change', persist);
+
+    p.form.addEventListener('submit', e => { e.preventDefault(); submit(p); });
+    $('.reload', node).addEventListener('click', () => { if (p.url) { p.load.classList.add('on'); p.frame.src = p.url; autoStop(p); } });
+    $('.newtab', node).addEventListener('click', () => openExternal(p));
+    $('.hintOpen', node).addEventListener('click', () => openExternal(p));
+    $('.home', node).addEventListener('click', () => clearPane(p));
+    $('.filebtn', node).addEventListener('click', () => p.file.click());
+    p.file.addEventListener('change', () => { if (p.file.files[0]) openFile(p, p.file.files[0]); p.file.value = ''; });
+    p.frame.addEventListener('load', () => p.load.classList.remove('on'));
+  });
+
+  function autoStop(p){ setTimeout(() => p.load.classList.remove('on'), 9000); }
+
+  function submit(p){
+    const raw = p.q.value.trim();
+    if (!raw) return;
+    if (looksLikeUrl(raw)) { openUrl(p, toUrl(raw)); return; }
+    const eng = SEARCH[p.engine.value];
+    const url = eng.url(raw);
+    if (eng.embed) openUrl(p, url);
+    else { window.open(url, '_blank', 'noopener'); toast('اتفتح البحث في تبويب جديد، لأن الموقع ده بيمنع العرض هنا.'); }
+  }
+
+  function openUrl(p, url){
+    releaseFile(p);
+    p.url = url; p.isFile = false;
+    p.empty.hidden = true; p.hint.hidden = false;
+    p.q.value = url;
+    p.load.classList.add('on'); autoStop(p);
+    p.frame.src = url;
+    persist();
+  }
+
+  function openFile(p, f){
+    releaseFile(p);
+    p.objUrl = URL.createObjectURL(f);
+    p.url = p.objUrl; p.isFile = true;
+    p.empty.hidden = true; p.hint.hidden = true;
+    p.q.value = f.name;
+    p.frame.src = p.objUrl;
+    persist();
+  }
+
+  function releaseFile(p){ if (p.objUrl) { URL.revokeObjectURL(p.objUrl); p.objUrl = null; } }
+
+  function openExternal(p){
+    if (p.url && !p.isFile) window.open(p.url, '_blank', 'noopener');
+    else if (p.isFile) window.open(p.url, '_blank');
+    else toast('اكتب رابطًا الأول.');
+  }
+
+  function clearPane(p){
+    releaseFile(p);
+    p.url = ''; p.isFile = false; p.q.value = '';
+    p.frame.removeAttribute('src');
+    p.frame.src = 'about:blank';
+    p.empty.hidden = false; p.hint.hidden = true;
+    p.load.classList.remove('on');
+    persist();
+  }
+
+  function persist(){
+    store.set({
+      urls: panes.map(p => p.isFile ? '' : p.url),
+      engines: panes.map(p => p.engine.value),
+      mode: stage.dataset.mode
+    });
+  }
+
+  /* ---------- عدد الشاشات ---------- */
+  const segBtns = [...document.querySelectorAll('.seg button')];
+  function setMode(m){
+    stage.dataset.mode = m;
+    segBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === String(m))));
+    persist();
+  }
+  segBtns.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+  /* ---------- الاتجاه: جنب بعض / فوق بعض ---------- */
+  let manualDir = false;
+  function autoDir(){ return innerHeight > innerWidth * 1.1 ? 'col' : 'row'; }
+  function setDir(d){ stage.dataset.dir = d; stage.style.setProperty('--split', '50%'); }
+  setDir(autoDir());
+  $('#dirBtn').addEventListener('click', () => {
+    manualDir = true; setDir(stage.dataset.dir === 'row' ? 'col' : 'row');
+  });
+  window.addEventListener('resize', () => { if (!manualDir) { const d = autoDir(); if (d !== stage.dataset.dir) setDir(d); } });
+
+  /* ---------- سحب الفاصل ---------- */
+  divider.addEventListener('pointerdown', e => {
+    divider.setPointerCapture(e.pointerId); stage.classList.add('drag');
+  });
+  divider.addEventListener('pointermove', e => {
+    if (!stage.classList.contains('drag')) return;
+    const r = stage.getBoundingClientRect();
+    let f = stage.dataset.dir === 'row'
+      ? (r.right - e.clientX) / r.width
+      : (e.clientY - r.top) / r.height;
+    f = Math.min(.8, Math.max(.2, f));
+    stage.style.setProperty('--split', (f * 100).toFixed(1) + '%');
+  });
+  const endDrag = () => stage.classList.remove('drag');
+  divider.addEventListener('pointerup', endDrag);
+  divider.addEventListener('pointercancel', endDrag);
+
+  /* ---------- ملء الشاشة ---------- */
+  $('#fsBtn').addEventListener('click', () => {
+    const el = document.documentElement;
+    const inFs = document.fullscreenElement || document.webkitFullscreenElement;
+    if (inFs) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+    const req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (!req) { toast('المتصفح ده مش بيدعم ملء الشاشة. جرّب "إضافة إلى الشاشة الرئيسية".'); return; }
+    try {
+      const r = req.call(el);
+      if (r && r.catch) r.catch(() => toast('المتصفح رفض ملء الشاشة.'));
+    } catch(e){ toast('المتصفح رفض ملء الشاشة.'); }
+  });
+
+  /* ---------- استرجاع آخر حالة ---------- */
+  if (saved.mode === '1' || saved.mode === '2') setMode(saved.mode);
+  if (saved.urls) saved.urls.forEach((u, i) => { if (u && panes[i]) openUrl(panes[i], u); });
+})();
+</script>
+</body>
+</html>
